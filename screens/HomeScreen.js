@@ -6,7 +6,7 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <TouchableOpacity onPress={() => navigation.navigate('StackScreen')}>
-        <Text>Start Flashcards</Text>
+        <Text>Start Flashy Cards</Text>
       </TouchableOpacity>
     </View>
   );
