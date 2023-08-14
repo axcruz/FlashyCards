@@ -8,6 +8,9 @@ const HomeScreen = ({ navigation }) => {
       <TouchableOpacity onPress={() => navigation.navigate('StackScreen')}>
         <Text>Start Flashy Cards</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('AddStackScreen')}>
+        <Text>Add Cards</Text>
+      </TouchableOpacity>
     </View>
   );
 };

@@ -1,5 +1,5 @@
 // StackScreen.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { flashcards } from '../cards';
 

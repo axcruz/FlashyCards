@@ -1,7 +1,6 @@
 // AddStackScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
 
 const AddStackScreen = () => {
     const [stackName, setStackName] = useState('');
