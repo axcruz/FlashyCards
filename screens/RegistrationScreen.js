@@ -15,8 +15,8 @@ export default function RegistrationScreen({navigation}) {
 
     const onRegisterPress = () => {
         if (password !== confirmPassword) {
-            alert("Passwords don't match.")
-            return
+            alert("Passwords don't match.");
+            return;
         }
             auth.createUserWithEmailAndPassword(email, password)
             .then((response) => {
@@ -34,11 +34,13 @@ export default function RegistrationScreen({navigation}) {
                         navigation.navigate('Home', {user: data})
                     })
                     .catch((error) => {
-                        alert(error)
+                        console.log(error);
+                        alert(error);
                     });
             })
             .catch((error) => {
-                alert(error)
+                console.log(error);
+                alert(error);
         });
     }
 
@@ -113,7 +115,7 @@ const styles = StyleSheet.create({
     logo: {
         flex: 1,
         height: 120,
-        width: 90,
+        width: 120,
         alignSelf: "center",
         margin: 30
     },

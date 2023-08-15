@@ -12,7 +12,7 @@ const ConfigScreen = ({ route, navigation }) => {
       return; // Ignore invalid or zero time
     }
 
-    navigation.navigate('CardScreen', { stackId, timePerCardInSeconds: timeInSeconds });
+    navigation.navigate('Cards', { stackId, timePerCardInSeconds: timeInSeconds });
   };
 
   return (
@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderWidth: 1,
     borderColor: 'gray',
+    backgroundColor: 'white',
     borderRadius: 5,
     paddingHorizontal: 10,
   },

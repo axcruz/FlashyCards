@@ -1,16 +1,25 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image, Text, TextInput, TouchableOpacity, View,  StyleSheet } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { db, auth } from '../firebase/config';
 
 export default function LoginScreen({navigation}) {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const onFooterLinkPress = () => {
-        navigation.navigate('Registration')
+        navigation.navigate('Registration');
     }
 
     const onLoginPress = () => {
+        auth.signInWithEmailAndPassword(email, password)
+        .then((response) => {
+           console.log(response.user);
+        })
+        .catch(error => {
+            console.log(error);
+            alert(error);
+        })
     }
 
     return (
@@ -65,7 +74,7 @@ const styles = StyleSheet.create({
     logo: {
         flex: 1,
         height: 120,
-        width: 90,
+        width: 120,
         alignSelf: "center",
         margin: 30
     },

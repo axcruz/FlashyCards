@@ -40,7 +40,7 @@ const StackScreen = ({ navigation }) => {
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.stackItem}
-                onPress={() => navigation.navigate('ConfigScreen', { stackId: item.id })}
+                onPress={() => navigation.navigate('Stack Settings', { stackId: item.id })}
               >
                 <Text style={styles.stackName}>{item.stackName}</Text>
                 <Text style={styles.cardCount}>{`${item.cards.length} Cards`}</Text>
