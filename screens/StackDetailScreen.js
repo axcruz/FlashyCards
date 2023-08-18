@@ -1,10 +1,13 @@
 // ConfigScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { flashcards } from '../cards';
 
 const ConfigScreen = ({ route, navigation }) => {
   const { stackId } = route.params;
   const [timePerCardInSeconds, setTimePerCardInSeconds] = useState('60');
+
+  const currentStack = flashcards.find((stack) => stack.id === stackId);
 
   const handleStartFlashcards = () => {
     const timeInSeconds = parseInt(timePerCardInSeconds, 10);
@@ -15,8 +18,13 @@ const ConfigScreen = ({ route, navigation }) => {
     navigation.navigate('Cards', { stackId, timePerCardInSeconds: timeInSeconds });
   };
 
+  const handleManageFlashCards = () => {
+    navigation.navigate('Manage Cards', { stackId });
+  };
+
   return (
     <View style={styles.container}>
+      <Text>{currentStack.stackName}</Text>
       <Text style={styles.label}>Time Per Card (seconds):</Text>
       <TextInput
         style={styles.configInput}
@@ -28,6 +36,9 @@ const ConfigScreen = ({ route, navigation }) => {
 
       <TouchableOpacity style={styles.startButton} onPress={handleStartFlashcards}>
         <Text style={styles.startButtonText}>Start Flashcards</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.manageButton} onPress={handleManageFlashCards}>
+        <Text style={styles.startButtonText}>Manage Flashcards</Text>
       </TouchableOpacity>
     </View>
   );
@@ -65,6 +76,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#4CAF50',
   },
   startButtonText: {
+    fontSize: 18,
+    color: 'white',
+    textAlign: 'center',
+  },
+  manageButton: {
+    marginTop: 20,
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#788eec',
+  },
+  manageButtonText: {
     fontSize: 18,
     color: 'white',
     textAlign: 'center',

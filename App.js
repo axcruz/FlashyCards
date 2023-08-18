@@ -4,20 +4,18 @@ import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-import { decode, encode } from 'base-64'
+import { decode, encode } from 'base-64';
 if (!global.btoa) { global.btoa = encode }
 if (!global.atob) { global.atob = decode }
+import { auth } from './firebase/config';
 
-import HomeScreen from './screens/HomeScreen';
 import CardScreen from './screens/CardScreen';
-import StackScreen from './screens/StackScreen';
-import ConfigScreen from './screens/ConfigScreen';
+import StackListScreen from './screens/StackListScreen';
+import StackDetailScreen from './screens/StackDetailScreen';
 import AddStackScreen from './screens/AddStackScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
-
-import { db, auth } from './firebase/config';
+import ManageCardsScreen from './screens/ManageCardsScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -43,10 +41,11 @@ function SignOut() {
 function CardStack() {
   return(
   <Stack.Navigator>
-  <Stack.Screen name="Stacks" component={StackScreen} />
-  <Stack.Screen name="Stack Settings" component={ConfigScreen} />
-  <Stack.Screen name="Cards" component={CardScreen} />
+  <Stack.Screen name="Stacks" component={StackListScreen} />
+  <Stack.Screen name="Stack Details" component={StackDetailScreen} />
   <Stack.Screen name="Add Stack" component={AddStackScreen} />
+  <Stack.Screen name="Manage Cards" component={ManageCardsScreen}/>
+  <Stack.Screen name="Cards" component={CardScreen} />
   </Stack.Navigator>
   );
 }
@@ -56,8 +55,8 @@ function CardStack() {
 
 { user ? (
       <Tab.Navigator screenOptions={{ headerShown: false }}>
-          <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="Flash Cards" component={CardStack} />
+          <Tab.Screen name="Cards Stacks" component={CardStack} />
+
           <Tab.Screen name="Logout" component={SignOut} />
         </Tab.Navigator>
 ) : (
@@ -67,7 +66,6 @@ function CardStack() {
           </Stack.Navigator>
 )
 }
-
     </NavigationContainer>
   );
 };

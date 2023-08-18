@@ -1,6 +1,6 @@
 // CardScreen.js
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ProgressBarAndroid } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { flashcards } from '../cards';
 
 const CardScreen = ({ route, navigation }) => {
@@ -12,10 +12,11 @@ const CardScreen = ({ route, navigation }) => {
 
   const currentStack = flashcards.find((stack) => stack.id === stackId);
   const cards = currentStack?.cards || [];
+  const totalCards = cards.length;
 
   const handleNextCard = () => {
     setShowAnswer(false);
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % cards.length);
+    setCurrentIndex((prevIndex) => (prevIndex + 1) );
     setTimeRemaining(timePerCardInSeconds);
   };
 
@@ -35,12 +36,10 @@ const CardScreen = ({ route, navigation }) => {
     }
   }, [timeRemaining]);
 
-  const calculateProgress = () => {
-    return timeRemaining / timePerCardInSeconds;
-  };
 
   return (
     <View style={styles.container}>
+           {currentIndex < totalCards ? (
       <TouchableOpacity
         style={styles.cardContainer}
         onPress={() => setShowAnswer(!showAnswer)}
@@ -54,10 +53,24 @@ const CardScreen = ({ route, navigation }) => {
           </Text>
         </View>
       </TouchableOpacity>
+         ) : (
+          <>
+          <Text style={styles.reviewStatus}>You have reviewed all cards!</Text>
+          <TouchableOpacity
+          onPress={() => navigation.navigate('Stack Settings', { stackId: stackId})}
+        >
+          <Text>Start Over</Text>
+        </TouchableOpacity>
+        </>
+      )}
+       {currentIndex < totalCards && (
       <Text style={styles.timerText}>{`Time Remaining: ${timeRemaining} seconds`}</Text>
+       )}
+         {currentIndex < totalCards && (
       <TouchableOpacity style={styles.nextButton} onPress={handleNextCard}>
         <Text style={styles.nextButtonText}>Next Card</Text>
       </TouchableOpacity>
+         )}
     </View>
   );
 };
@@ -132,6 +145,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     textAlign: 'center',
+  },
+  reviewStatus: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
   },
 });
 

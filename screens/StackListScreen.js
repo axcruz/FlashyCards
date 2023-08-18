@@ -40,7 +40,7 @@ const StackScreen = ({ navigation }) => {
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.stackItem}
-                onPress={() => navigation.navigate('Stack Settings', { stackId: item.id })}
+                onPress={() => navigation.navigate('Stack Details', { stackId: item.id })}
               >
                 <Text style={styles.stackName}>{item.stackName}</Text>
                 <Text style={styles.cardCount}>{`${item.cards.length} Cards`}</Text>
@@ -55,6 +55,12 @@ const StackScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+                  <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate('Add Stack')}
+      >
+        <Text style={styles.addButtonText}>Add Stack</Text>
+      </TouchableOpacity>
       <FlatList
         data={Object.entries(groupedStacks).map(([category, stacks]) => ({
           title: category,

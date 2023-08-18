@@ -1,40 +1,37 @@
 // AddStackScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import addStack from '../firebase/util/addStack';
 
-const AddStackScreen = () => {
+const AddStackScreen = ({ route, navigation }) => {
     const [stackName, setStackName] = useState('');
     const [category, setCategory] = useState('');
-    const [question, setQuestion] = useState('');
-    const [answer, setAnswer] = useState('');
   
     // Function to add the stack and card data to Firestore
-    const handleAddStack = () => {
+    const handleAddStack = async () => {
       // Validate inputs (you can add more validation logic as needed)
-      if (!stackName.trim() || !category.trim() || !question.trim() || !answer.trim()) {
+      if (!stackName.trim() || !category.trim()) {
         alert('Please fill all fields.');
         return;
       }
-  
-      // Add the stack to Firestore
-      firestore()
-        .collection('stacks')
-        .add({
-          stackName,
-          category,
-          cards: [{ question, answer }],
-        })
-        .then(() => {
-          alert('Stack and card added successfully!');
-          setStackName('');
-          setCategory('');
-          setQuestion('');
-          setAnswer('');
-        })
-        .catch((error) => {
-          console.error('Error adding stack:', error);
-          alert('An error occurred. Please try again.');
+      try {
+        const newStackId = await addStack({
+          stackName: stackName,
+          category: category,
+          // Add any other stack properties here
         });
+
+        if (newStackId) {
+        navigation.navigate('Manage Cards', { stackId: newStackId });
+        } else {
+          console.error('Error unable to navigate to Manage Cards screen.');
+          alert('An unexpected error occurred.');
+        }
+      } catch (error) {
+        // Handle error
+        console.error(error);
+        alert(error);
+      }
     };
   
     return (
@@ -51,20 +48,8 @@ const AddStackScreen = () => {
           value={category}
           onChangeText={setCategory}
         />
-        <TextInput
-          style={styles.input}
-          placeholder="Question"
-          value={question}
-          onChangeText={setQuestion}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Answer"
-          value={answer}
-          onChangeText={setAnswer}
-        />
         <TouchableOpacity style={styles.addButton} onPress={handleAddStack}>
-          <Text style={styles.addButtonText}>Add Stack and Card</Text>
+          <Text style={styles.addButtonText}>Add Stack</Text>
         </TouchableOpacity>
       </View>
     );
