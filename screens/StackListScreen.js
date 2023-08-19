@@ -1,13 +1,28 @@
 // StackScreen.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
-import { flashcards } from '../cards';
+import getAllStacks from '../firebase/util/getAllStacks';
 
-const StackScreen = ({ navigation }) => {
+const StackScreen = ({ route, navigation }) => {
   const [expandedCategories, setExpandedCategories] = useState([]);
+  const [stacks, setStacks] = useState([]);
+
+  useEffect(() => {
+       // Fetch stacks every time the screen is rendered
+    const fetchStacks = async () => {
+      try {
+        const allStacks = await getAllStacks();
+        setStacks(allStacks);
+      } catch (error) {
+        // Handle error
+      }
+    };
+
+    fetchStacks();
+  });
 
   // Function to group stacks by category for Accordion
-  const groupedStacks = flashcards.reduce((result, stack) => {
+  const groupedStacks = stacks.reduce((result, stack) => {
     const category = stack.category || 'Uncategorized';
     result[category] = [...(result[category] || []), stack];
     return result;
@@ -43,7 +58,11 @@ const StackScreen = ({ navigation }) => {
                 onPress={() => navigation.navigate('Stack Details', { stackId: item.id })}
               >
                 <Text style={styles.stackName}>{item.stackName}</Text>
-                <Text style={styles.cardCount}>{`${item.cards.length} Cards`}</Text>
+                { item.cardCount > 0 ? (
+                <Text style={styles.cardCount}>{`${item.cardCount} Cards`}</Text>
+         ) : (
+          <Text style={styles.cardCount}>{'No Cards'}</Text>
+         ) }
               </TouchableOpacity>
             )}
             keyExtractor={(item) => item.id.toString()}

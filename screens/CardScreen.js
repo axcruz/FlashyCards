@@ -1,17 +1,14 @@
 // CardScreen.js
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { flashcards } from '../cards';
 
 const CardScreen = ({ route, navigation }) => {
-  const { stackId, timePerCardInSeconds } = route.params;
+  const { stackId, timePerCardInSeconds, stackCards } = route.params;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(timePerCardInSeconds);
   const timerRef = useRef(null);
-
-  const currentStack = flashcards.find((stack) => stack.id === stackId);
-  const cards = currentStack?.cards || [];
+  const cards = stackCards;
   const totalCards = cards.length;
 
   const handleNextCard = () => {
@@ -57,7 +54,7 @@ const CardScreen = ({ route, navigation }) => {
           <>
           <Text style={styles.reviewStatus}>You have reviewed all cards!</Text>
           <TouchableOpacity
-          onPress={() => navigation.navigate('Stack Settings', { stackId: stackId})}
+          onPress={() => navigation.navigate('Stack Details', { stackId: stackId})}
         >
           <Text>Start Over</Text>
         </TouchableOpacity>
@@ -106,7 +103,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   cardLabel: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'gray',
     position: 'absolute',

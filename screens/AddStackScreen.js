@@ -18,6 +18,7 @@ const AddStackScreen = ({ route, navigation }) => {
         const newStackId = await addStack({
           stackName: stackName,
           category: category,
+          cardCount: 0,
           // Add any other stack properties here
         });
 

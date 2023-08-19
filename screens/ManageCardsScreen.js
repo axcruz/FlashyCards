@@ -2,7 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { db, auth } from '../firebase/config';
-import getStackWithCards from '../firebase/util/getStackWithCards';
+
+import addCardToStack from '../firebase/util/addCardToStack';
+import getStack from '../firebase/util/getStack';
 
 const ManageCardsScreen = ({ route, navigation }) => {
   const { stackId } = route.params;
@@ -12,7 +14,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
   useEffect(() => {
       const fetchData = async () => {
         try {
-          const result = await getStackWithCards(stackId);
+          const result = await getStack(stackId);
           setStack(result);
           setCards(result.cards);
         } catch (error) {
@@ -48,15 +50,10 @@ const ManageCardsScreen = ({ route, navigation }) => {
   const handleAddCard = async () => {
     try {
       const newCardData = {
-        question: 'New Question',
-        answer: 'New Answer',
+        question: 'New Question 2',
+        answer: 'New Answer 2',
       };
-      await db
-        .collection('stacks')
-        .doc(stackId)
-        .collection('cards')
-        .add(newCardData);
-      console.log('New card added successfully');
+      await addCardToStack(stackId, newCardData);
     } catch (error) {
       console.error('Error adding new card:', error);
     }

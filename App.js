@@ -1,6 +1,7 @@
 // App.js
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
+import { Button, LogoTitle } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -9,6 +10,7 @@ if (!global.btoa) { global.btoa = encode }
 if (!global.atob) { global.atob = decode }
 import { auth } from './firebase/config';
 
+import HomeScreen from './screens/HomeScreen';
 import CardScreen from './screens/CardScreen';
 import StackListScreen from './screens/StackListScreen';
 import StackDetailScreen from './screens/StackDetailScreen';
@@ -41,7 +43,15 @@ function SignOut() {
 function CardStack() {
   return(
   <Stack.Navigator>
-  <Stack.Screen name="Stacks" component={StackListScreen} />
+  <Stack.Screen name="Stacks" component={StackListScreen} options={{
+          headerRight: () => (
+            <Button
+              onPress={() => alert('This is a button!')}
+              title="Profile"
+              color="#000"
+            />
+          ),
+        }}/>
   <Stack.Screen name="Stack Details" component={StackDetailScreen} />
   <Stack.Screen name="Add Stack" component={AddStackScreen} />
   <Stack.Screen name="Manage Cards" component={ManageCardsScreen}/>

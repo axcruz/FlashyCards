@@ -1,13 +1,27 @@
-// ConfigScreen.js
-import React, { useState } from 'react';
+// StackDetailScreen.js
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { flashcards } from '../cards';
+import getStack from '../firebase/util/getStack';
 
-const ConfigScreen = ({ route, navigation }) => {
+
+const StackDetailScreen = ({ route, navigation }) => {
   const { stackId } = route.params;
   const [timePerCardInSeconds, setTimePerCardInSeconds] = useState('60');
+  const [stack, setStack] = useState();
+  const [cards, setCards] = useState();
 
-  const currentStack = flashcards.find((stack) => stack.id === stackId);
+  useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const result = await getStack(stackId);
+          setStack(result.stackData);
+          setCards(result.cardsData);
+        } catch (error) {
+          // Handle error
+        }
+      };
+      fetchData();
+    }, [stackId]);
 
   const handleStartFlashcards = () => {
     const timeInSeconds = parseInt(timePerCardInSeconds, 10);
@@ -15,7 +29,7 @@ const ConfigScreen = ({ route, navigation }) => {
       return; // Ignore invalid or zero time
     }
 
-    navigation.navigate('Cards', { stackId, timePerCardInSeconds: timeInSeconds });
+    navigation.navigate('Cards', { stackId, timePerCardInSeconds: timeInSeconds, stackCards: cards });
   };
 
   const handleManageFlashCards = () => {
@@ -24,23 +38,30 @@ const ConfigScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text>{currentStack.stackName}</Text>
-      <Text style={styles.label}>Time Per Card (seconds):</Text>
-      <TextInput
-        style={styles.configInput}
-        value={timePerCardInSeconds}
-        onChangeText={setTimePerCardInSeconds}
-        keyboardType="numeric"
-        placeholder="Enter time per card"
-      />
+    { stack ? 
+<>
+<Text>{stack.stackName}</Text>
+<Text style={styles.labe}>Time Per Card (seconds):</Text>
+<TextInput
+  style={styles.configInput}
+  value={timePerCardInSeconds}
+  onChangeText={setTimePerCardInSeconds}
+  keyboardType="numeric"
+  placeholder="Enter time per card"
+/>
 
-      <TouchableOpacity style={styles.startButton} onPress={handleStartFlashcards}>
-        <Text style={styles.startButtonText}>Start Flashcards</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.manageButton} onPress={handleManageFlashCards}>
-        <Text style={styles.startButtonText}>Manage Flashcards</Text>
-      </TouchableOpacity>
-    </View>
+<TouchableOpacity style={styles.startButton} onPress={handleStartFlashcards}>
+  <Text style={styles.startButtonText}>Start Flashcards</Text>
+</TouchableOpacity>
+<TouchableOpacity style={styles.manageButton} onPress={handleManageFlashCards}>
+  <Text style={styles.startButtonText}>Manage Flashcards</Text>
+</TouchableOpacity>
+</>
+      : (
+        <Text>Loading...</Text>
+  )    }
+  </View>
+
   );
 };
 
@@ -93,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConfigScreen;
+export default StackDetailScreen;

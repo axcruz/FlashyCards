@@ -1,7 +1,7 @@
 import {db, auth} from '../config';
 
 // Helper function to query for a stack and its cards from Firestore
-const getStackWithCards = async (stackId) => {
+const getStack = async (stackId) => {
   try {
     const stackRef = db.collection('stacks').doc(stackId);
     const stackDoc = await stackRef.get();
@@ -9,7 +9,6 @@ const getStackWithCards = async (stackId) => {
     if (!stackDoc.exists) {
       throw new Error('Stack not found');
     }
-
     const stackData = stackDoc.data();
     const cardsQuerySnapshot = await stackRef.collection('cards').get();
     const cardsData = cardsQuerySnapshot.docs.map((cardDoc) => ({
@@ -17,11 +16,11 @@ const getStackWithCards = async (stackId) => {
       ...cardDoc.data(),
     }));
 
-    return { stackData, cardsData };
+    return {stackData, cardsData};
   } catch (error) {
-    console.error('Error fetching stack with cards:', error);
+    console.error('Error fetching stack:', error);
     throw error;
   }
 };
 
-export default getStackWithCards;
+export default getStack;
