@@ -1,10 +1,10 @@
-import {db} from '../config';
+import {db, auth} from '../config';
 
 // Helper function to get all stacks
 const getAllStacks = async () => {
   try {
     const stacksCollection = db.collection('stacks');
-    const querySnapshot = await stacksCollection.get();
+    const querySnapshot = await stacksCollection.where("author", "==", auth.currentUser.uid).get();
 
     const stacks = [];
     querySnapshot.forEach((doc) => {

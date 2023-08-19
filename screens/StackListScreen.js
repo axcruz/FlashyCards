@@ -42,6 +42,8 @@ const StackScreen = ({ route, navigation }) => {
     const isExpanded = expandedCategories.includes(item.title);
     return (
       <React.Fragment>
+        {stacks ?  (
+          <>
         <TouchableOpacity
           style={styles.sectionHeader}
           onPress={() => toggleCategory(item.title)}
@@ -68,6 +70,11 @@ const StackScreen = ({ route, navigation }) => {
             keyExtractor={(item) => item.id.toString()}
           />
         )}
+        </>
+        ) : (
+          <ActivityIndicator size="large" color="#007AFF" />
+        )
+         }
       </React.Fragment>
     );
   };
@@ -75,10 +82,10 @@ const StackScreen = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
                   <TouchableOpacity
-        style={styles.addButton}
+        style={styles.addStackButton}
         onPress={() => navigation.navigate('Add Stack')}
       >
-        <Text style={styles.addButtonText}>Add Stack</Text>
+        <Text style={styles.addStackButtonText}>Create a New Stack</Text>
       </TouchableOpacity>
       <FlatList
         data={Object.entries(groupedStacks).map(([category, stacks]) => ({
@@ -136,6 +143,17 @@ const styles = StyleSheet.create({
   cardCount: {
     fontSize: 16,
     color: '#888888',
+  },
+  addStackButton: {
+    margin: 20,
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#788eec',
+  },
+  addStackButtonText: {
+    fontSize: 18,
+    color: 'white',
+    textAlign: 'center',
   },
 });
 

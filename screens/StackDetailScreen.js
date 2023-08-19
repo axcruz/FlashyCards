@@ -1,6 +1,6 @@
 // StackDetailScreen.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import getStack from '../firebase/util/getStack';
 
 
@@ -58,7 +58,7 @@ const StackDetailScreen = ({ route, navigation }) => {
 </TouchableOpacity>
 </>
       : (
-        <Text>Loading...</Text>
+        <ActivityIndicator size="large" color="#007AFF" />
   )    }
   </View>
 

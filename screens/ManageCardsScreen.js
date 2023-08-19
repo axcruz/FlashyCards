@@ -1,6 +1,6 @@
 // ManageCardsScreen.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import { db, auth } from '../firebase/config';
 
 import addCardToStack from '../firebase/util/addCardToStack';
@@ -8,23 +8,23 @@ import getStack from '../firebase/util/getStack';
 
 const ManageCardsScreen = ({ route, navigation }) => {
   const { stackId } = route.params;
-  const {stack, setStack} = useState([]);
+  const [stack, setStack] = useState([]);
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const result = await getStack(stackId);
-          setStack(result);
-          setCards(result.cards);
-        } catch (error) {
-          // Handle error
-        }
-      };
-  
-      fetchData();
-    }, [stackId]);
-  
+    const fetchData = async () => {
+      try {
+        const result = await getStack(stackId);
+        setStack(result.stackData);
+        setCards(result.cardsData);
+      } catch (error) {
+        // Handle error
+      }
+    };
+
+    fetchData();
+  }, [stackId, cards]);
+
 
   // Function to handle card editing
   const handleEditCard = (cardId) => {
@@ -50,8 +50,8 @@ const ManageCardsScreen = ({ route, navigation }) => {
   const handleAddCard = async () => {
     try {
       const newCardData = {
-        question: 'New Question 2',
-        answer: 'New Answer 2',
+        question: 'New Question 3',
+        answer: 'New Answer 3',
       };
       await addCardToStack(stackId, newCardData);
     } catch (error) {
@@ -61,30 +61,38 @@ const ManageCardsScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={cards}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.cardItem}>
-            <Text>{item.question}</Text>
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => handleEditCard(item.id)}
-            >
-              <Text>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => handleDeleteCard(item.id)}
-            >
-              <Text>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-      <TouchableOpacity style={styles.addButton} onPress={handleAddCard}>
-        <Text>Add Card</Text>
-      </TouchableOpacity>
+      {cards ? (
+        <>
+          <FlatList
+            data={cards}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.cardItem}>
+                <Text>{item.question}</Text>
+                <TouchableOpacity
+                  style={styles.editButton}
+                  onPress={() => handleEditCard(item.id)}
+                >
+                  <Text>Edit</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={() => handleDeleteCard(item.id)}
+                >
+                  <Text>Delete</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+          <TouchableOpacity style={styles.addButton} onPress={handleAddCard}>
+            <Text>Add Card</Text>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <ActivityIndicator size="large" color="#007AFF" />
+      )
+
+      }
     </View>
   );
 };

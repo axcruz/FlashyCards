@@ -1,4 +1,4 @@
-import { db } from "../config";
+import { db, auth } from "../config";
 
 // Helper function to add a card to a stack and increment cardCount
 const addCardToStack = async (stackId, cardData) => {
@@ -23,6 +23,7 @@ const addCardToStack = async (stackId, cardData) => {
       const cardsCollection = stackRef.collection('cards');
 
       // Add the card data to the collection
+      cardData.author = auth.currentUser.uid;
       await cardsCollection.add(cardData);
     });
 
