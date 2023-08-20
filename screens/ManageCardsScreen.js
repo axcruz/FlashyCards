@@ -4,6 +4,7 @@ import { db, auth } from '../firebase/config';
 
 import getStack from '../utils/getStack';
 import addCard from '../utils/addCard';
+import updateCard from '../utils/updateCard';
 import deleteCard from '../utils/deleteCard';
 
 const ManageCardsScreen = ({ route, navigation }) => {
@@ -11,6 +12,8 @@ const ManageCardsScreen = ({ route, navigation }) => {
   const [cards, setCards] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAddingCard, setIsAddingCard] = useState(false); // State to control the modal
+  const [isEditingCard, setIsEditingCard] = useState(false); // State to control the modal
+  const [cardId, setCardId] = useState('');
   const [question, setQuestion] = useState(''); // State to store the question input
   const [answer, setAnswer] = useState(''); // State to store the answer input
 
@@ -27,8 +30,21 @@ const ManageCardsScreen = ({ route, navigation }) => {
     fetchData();
   }, [stackId, cards]);
 
-  const handleEditCard = (cardId) => {
+  const handleCancelModal = () => {
+    setIsAddingCard(false); // Hide the modal after adding the card
+    setIsEditingCard(false); // Hide the modal after adding the card
+    setIsProcessing(false);
+    setCardId('');
+    setQuestion(''); // Clear the input fields
+    setAnswer('');
+  }
+
+  const handleEditCard = (cardId, cardQuestion, cardAnswer) => {
     // Navigate to card editing screen, passing cardId
+    setIsEditingCard(true);
+    setCardId(cardId);
+    setQuestion(cardQuestion);
+    setAnswer(cardAnswer);
   };
 
   const handleDeleteCard = async (cardId) => {
@@ -58,9 +74,15 @@ const ManageCardsScreen = ({ route, navigation }) => {
     };
 
     try {
-      await addCard(stackId, newCardData);
+      if (isAddingCard) {
+        await addCard(stackId, newCardData);
+      } else if (isEditingCard) {
+        await updateCard(stackId, cardId, newCardData);
+      }
       setIsAddingCard(false); // Hide the modal after adding the card
+      setIsEditingCard(false); // Hide the modal after adding the card
       setIsProcessing(false);
+      setCardId('');
       setQuestion(''); // Clear the input fields
       setAnswer('');
     } catch (error) {
@@ -72,9 +94,14 @@ const ManageCardsScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       {cards ? (
         <>
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('Stack Details' , {stackId})}>
+            <Text>Stack Details</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.addButton} onPress={handleAddCard}>
             <Text>Add Card</Text>
           </TouchableOpacity>
+          </View>
 
           <FlatList
             data={cards}
@@ -84,7 +111,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
                 <Text style={{ width: '65%' }} numberOfLines={1} ellipsizeMode='tail'>{item.question}</Text>
                 <TouchableOpacity
                   style={styles.editButton}
-                  onPress={() => handleEditCard(item.id)}
+                  onPress={() => handleEditCard(item.id, item.question, item.answer)}
                 >
                   <Text>Edit</Text>
                 </TouchableOpacity>
@@ -100,12 +127,13 @@ const ManageCardsScreen = ({ route, navigation }) => {
 
           {/* Modal for adding cards */}
           <Modal
-            visible={isAddingCard}
+            visible={isAddingCard || isEditingCard}
             animationType="slide"
             transparent={false}
           >
             <View style={styles.modalView}>
-              <Text style={[styles.modalTitle]}>Add a New Card</Text>
+              {isAddingCard && (<Text style={[styles.modalTitle]}>Add a New Card</Text>)}
+              {isEditingCard && (<Text style={[styles.modalTitle]}>Edit Card</Text>)}
               <Text style={{ alignSelf: 'flex-start' }}>Question</Text>
               <TextInput
                 style={styles.input}
@@ -127,7 +155,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TouchableOpacity
                   style={isProcessing ? styles.disabledButton : styles.cancelButton}
-                  onPress={() => setIsAddingCard(false)}
+                  onPress={handleCancelModal}
                   disabled={isProcessing}
                 >
                   <Text style={[styles.buttonText]}>Cancel</Text>

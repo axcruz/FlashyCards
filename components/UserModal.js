@@ -3,7 +3,7 @@ import { View, TouchableOpacity, Modal, Text, StyleSheet, ActivityIndicator} fro
 import Icon from 'react-native-vector-icons/Feather';
 import { auth } from '../firebase/config';
 
-const UserModalButton = (props) => {
+const UserModal = (props) => {
   const [user, setUser] = useState();
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -111,4 +111,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserModalButton;
+export default UserModal;

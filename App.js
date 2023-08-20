@@ -16,7 +16,7 @@ import LoginScreen from './screens/LoginScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
 import ManageCardsScreen from './screens/ManageCardsScreen';
 
-import UserModalButton from './components/UserModalButton';
+import UserModal from './components/UserModal';
 
 const Stack = createStackNavigator();
 
@@ -40,7 +40,7 @@ const App = () => {
         <Stack.Navigator>
           <Stack.Screen name="Stacks" component={StackListScreen} options={{
             headerRight: () => (
-              <UserModalButton user={user} />
+              <UserModal user={user} />
             ),
           }} />
           <Stack.Screen name="Stack Details" component={StackDetailScreen} options={{ title: 'Details' }} />

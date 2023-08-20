@@ -1,12 +1,14 @@
 // StackListScreen.js
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, RefreshControl, ScrollView } from 'react-native';
 import getAllStacks from '../utils/getAllStacks';
 import { auth } from '../firebase/config';
 
 const StackListScreen = ({ route, navigation }) => {
+  const [refreshing, setRefreshing] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState([]);
   const [stacks, setStacks] = useState([]);
+
 
   useEffect(() => {
        // Fetch stacks every time the screen is rendered
@@ -21,7 +23,15 @@ const StackListScreen = ({ route, navigation }) => {
     };
     fetchStacks();
   }
-  });
+  }, [refreshing]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+  
 
   // Function to group stacks by category for Accordion
   const groupedStacks = stacks.reduce((result, stack) => {
@@ -89,11 +99,15 @@ const StackListScreen = ({ route, navigation }) => {
       >
         <Text style={styles.addStackButtonText}>Create a New Stack</Text>
       </TouchableOpacity>
+      <Text style={{alignSelf: 'center', margin: 5}}>Hint: Pull down to refresh</Text>
       <FlatList
         data={Object.entries(groupedStacks).map(([category, stacks]) => ({
           title: category,
           data: stacks,
         }))}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> 
+          }
         renderItem={renderItem}
         keyExtractor={(item) => item.title}
         ListHeaderComponent={<View style={{ marginBottom: 12 }} />}
@@ -147,10 +161,15 @@ const styles = StyleSheet.create({
     color: '#888888',
   },
   addStackButton: {
-    margin: 20,
-    padding: 10,
-    borderRadius: 5,
     backgroundColor: '#788eec',
+    marginLeft: 30,
+    marginRight: 30,
+    marginTop: 20,
+    marginBottom: 20,
+    height: 48,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: 'center'
   },
   addStackButtonText: {
     fontSize: 18,

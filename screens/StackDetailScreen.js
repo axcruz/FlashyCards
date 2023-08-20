@@ -1,11 +1,13 @@
 // StackDetailScreen.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Switch } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Switch, Modal } from 'react-native';
 import getStack from '../utils/getStack';
+import deleteStack from '../utils/deleteStack';
 
 
 const StackDetailScreen = ({ route, navigation }) => {
   const { stackId } = route.params;
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [timePerCardInSeconds, setTimePerCardInSeconds] = useState('60');
   const [randomOrder, setRandomOrder] = useState(false);
   const [untimed, setUntimed] = useState(false);
@@ -20,6 +22,8 @@ const StackDetailScreen = ({ route, navigation }) => {
         setCards(result.cardsData);
       } catch (error) {
         // Handle error
+        alert('Stack not found. It may have been recently deleted. Navigating back to list.');
+        navigation.navigate('Stacks');
       }
     };
     fetchData();
@@ -57,6 +61,19 @@ const StackDetailScreen = ({ route, navigation }) => {
   const handleManageFlashCards = () => {
     navigation.navigate('Manage Cards', { stackId });
   };
+
+  const toggleDeleteModal = () => {
+    setIsDeleteModalVisible(!isDeleteModalVisible);
+  };
+
+  const handleDeleteStack = async () => {
+    try {
+      await deleteStack(stackId);
+      navigation.navigate('Stacks');
+    } catch (error) {
+      console.error('Error adding deleting stack:', error);
+    }
+  }
 
   return (
     <>
@@ -104,10 +121,13 @@ const StackDetailScreen = ({ route, navigation }) => {
           </View>
 
           <TouchableOpacity style={styles.startButton} onPress={handleStartFlashcards}>
-            <Text style={styles.startButtonText}>Start Flashcards</Text>
+            <Text style={styles.buttonText}>Start Flashcards</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.manageButton} onPress={handleManageFlashCards}>
-            <Text style={styles.manageButtonText}>Manage Flashcards</Text>
+            <Text style={styles.buttonText}>Manage Flashcards</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.deleteButton} onPress={toggleDeleteModal}>
+            <Text style={styles.buttonText}>Delete Stack</Text>
           </TouchableOpacity>
         </View>
         : (
@@ -115,6 +135,25 @@ const StackDetailScreen = ({ route, navigation }) => {
             <ActivityIndicator size="large" color="#007AFF" />
           </View>
         )}
+
+      <Modal
+        visible={isDeleteModalVisible}
+        transparent={true}
+        animationType="slide"
+      >
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>Are you sure you want to delete this stack?</Text>
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity onPress={toggleDeleteModal} style={styles.cancelButton}>
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleDeleteStack} style={styles.confirmButton}>
+              <Text style={styles.buttonText}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     </>
 
   );
@@ -156,19 +195,19 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: '#4CAF50',
   },
-  startButtonText: {
-    fontSize: 18,
-    color: 'white',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
   manageButton: {
     marginTop: 20,
     padding: 10,
     borderRadius: 5,
     backgroundColor: '#788eec',
   },
-  manageButtonText: {
+  deleteButton: {
+    marginTop: 20,
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: 'red',
+  },
+  buttonText: {
     fontSize: 18,
     color: 'white',
     textAlign: 'center',
@@ -184,7 +223,32 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0', // Use a light gray color
     borderColor: '#ccc', // Use a light gray border color
     color: '#888', // Use a gray text color
-  }
+  },
+  modalView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    margin: 20,
+    borderRadius: 10,
+    padding: 20,
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  confirmButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    margin: 5,
+  },
+  cancelButton: {
+    backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 5,
+    margin: 5,
+  },
 
 });
 
