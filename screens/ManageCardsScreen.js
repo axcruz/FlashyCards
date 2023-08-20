@@ -1,21 +1,23 @@
-// ManageCardsScreen.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator, TextInput, Modal, ScrollView } from 'react-native';
 import { db, auth } from '../firebase/config';
 
-import addCardToStack from '../firebase/util/addCardToStack';
-import getStack from '../firebase/util/getStack';
+import getStack from '../utils/getStack';
+import addCard from '../utils/addCard';
+import deleteCard from '../utils/deleteCard';
 
 const ManageCardsScreen = ({ route, navigation }) => {
   const { stackId } = route.params;
-  const [stack, setStack] = useState([]);
   const [cards, setCards] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isAddingCard, setIsAddingCard] = useState(false); // State to control the modal
+  const [question, setQuestion] = useState(''); // State to store the question input
+  const [answer, setAnswer] = useState(''); // State to store the answer input
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await getStack(stackId);
-        setStack(result.stackData);
         setCards(result.cardsData);
       } catch (error) {
         // Handle error
@@ -25,35 +27,42 @@ const ManageCardsScreen = ({ route, navigation }) => {
     fetchData();
   }, [stackId, cards]);
 
-
-  // Function to handle card editing
   const handleEditCard = (cardId) => {
     // Navigate to card editing screen, passing cardId
   };
 
-  // Function to handle card deletion
   const handleDeleteCard = async (cardId) => {
     try {
-      await db
-        .collection('stacks')
-        .doc(stackId)
-        .collection('cards')
-        .doc(cardId)
-        .delete();
-      console.log('Card deleted successfully');
+      await deleteCard(stackId, cardId);
     } catch (error) {
       console.error('Error deleting card:', error);
     }
   };
 
-  // Function to add a new card
   const handleAddCard = async () => {
+    setIsAddingCard(true); // Show the modal
+  };
+
+  const handleSaveCard = async () => {
+    setIsProcessing(true);
+    // You can add validation here if needed
+    if (question.trim() === '' || answer.trim() === '') {
+      alert('Please enter both a question and an answer.');
+      return;
+    }
+
+    // Create a new card with the entered question and answer
+    const newCardData = {
+      question: question,
+      answer: answer,
+    };
+
     try {
-      const newCardData = {
-        question: 'New Question 3',
-        answer: 'New Answer 3',
-      };
-      await addCardToStack(stackId, newCardData);
+      await addCard(stackId, newCardData);
+      setIsAddingCard(false); // Hide the modal after adding the card
+      setIsProcessing(false);
+      setQuestion(''); // Clear the input fields
+      setAnswer('');
     } catch (error) {
       console.error('Error adding new card:', error);
     }
@@ -63,12 +72,16 @@ const ManageCardsScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       {cards ? (
         <>
+          <TouchableOpacity style={styles.addButton} onPress={handleAddCard}>
+            <Text>Add Card</Text>
+          </TouchableOpacity>
+
           <FlatList
             data={cards}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <View style={styles.cardItem}>
-                <Text>{item.question}</Text>
+                <Text style={{ width: '65%' }} numberOfLines={1} ellipsizeMode='tail'>{item.question}</Text>
                 <TouchableOpacity
                   style={styles.editButton}
                   onPress={() => handleEditCard(item.id)}
@@ -84,15 +97,56 @@ const ManageCardsScreen = ({ route, navigation }) => {
               </View>
             )}
           />
-          <TouchableOpacity style={styles.addButton} onPress={handleAddCard}>
-            <Text>Add Card</Text>
-          </TouchableOpacity>
+
+          {/* Modal for adding cards */}
+          <Modal
+            visible={isAddingCard}
+            animationType="slide"
+            transparent={false}
+          >
+            <View style={styles.modalView}>
+              <Text style={[styles.modalTitle]}>Add a New Card</Text>
+              <Text style={{ alignSelf: 'flex-start' }}>Question</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Write your question here"
+                value={question}
+                onChangeText={(text) => setQuestion(text)}
+                multiline={true}
+                numberOfLines={5}
+              />
+              <Text style={{ alignSelf: 'flex-start' }}>Answer</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Write your answer here"
+                value={answer}
+                onChangeText={(text) => setAnswer(text)}
+                multiline={true}
+                numberOfLines={5}
+              />
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TouchableOpacity
+                  style={isProcessing ? styles.disabledButton : styles.cancelButton}
+                  onPress={() => setIsAddingCard(false)}
+                  disabled={isProcessing}
+                >
+                  <Text style={[styles.buttonText]}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={isProcessing ? styles.disabledButton : styles.saveButton}
+                  onPress={handleSaveCard}
+                  disabled={isProcessing}
+                >
+                  <Text style={[styles.buttonText]}>Save</Text>
+                </TouchableOpacity>
+
+              </View>
+            </View>
+          </Modal>
         </>
       ) : (
         <ActivityIndicator size="large" color="#007AFF" />
-      )
-
-      }
+      )}
     </View>
   );
 };
@@ -112,16 +166,67 @@ const styles = StyleSheet.create({
     marginRight: 10,
     padding: 5,
     backgroundColor: 'lightblue',
+    borderRadius: 5
   },
   deleteButton: {
     padding: 5,
     backgroundColor: 'lightcoral',
+    borderRadius: 5
   },
   addButton: {
     alignSelf: 'flex-end',
-    marginTop: 10,
+    margin: 10,
     padding: 10,
     backgroundColor: 'lightgreen',
+    borderRadius: 5
+  },
+  modalView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    margin: 20,
+    borderRadius: 10,
+    padding: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    margin: 10,
+    fontWeight: 'bold'
+  },
+  input: {
+    width: '100%',
+    height: 200,
+    borderWidth: 1,
+    borderColor: 'gray',
+    backgroundColor: 'white',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+  },
+  disabledButton: {
+    backgroundColor: 'gray',
+    padding: 10,
+    borderRadius: 5,
+    margin: 10,
+  },
+  saveButton: {
+    backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 5,
+    margin: 10,
+  },
+  cancelButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    margin: 10
+  },
+  buttonText: {
+    fontSize: 18,
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });
 

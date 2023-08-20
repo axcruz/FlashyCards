@@ -1,7 +1,7 @@
 // AddStackScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import addStack from '../firebase/util/addStack';
+import addStack from '../utils/addStack';
 
 const AddStackScreen = ({ route, navigation }) => {
     const [stackName, setStackName] = useState('');

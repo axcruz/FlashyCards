@@ -1,14 +1,16 @@
-// StackScreen.js
+// StackListScreen.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
-import getAllStacks from '../firebase/util/getAllStacks';
+import getAllStacks from '../utils/getAllStacks';
+import { auth } from '../firebase/config';
 
-const StackScreen = ({ route, navigation }) => {
+const StackListScreen = ({ route, navigation }) => {
   const [expandedCategories, setExpandedCategories] = useState([]);
   const [stacks, setStacks] = useState([]);
 
   useEffect(() => {
        // Fetch stacks every time the screen is rendered
+       if (auth.currentUser) {
     const fetchStacks = async () => {
       try {
         const allStacks = await getAllStacks();
@@ -17,8 +19,8 @@ const StackScreen = ({ route, navigation }) => {
         // Handle error
       }
     };
-
     fetchStacks();
+  }
   });
 
   // Function to group stacks by category for Accordion
@@ -154,7 +156,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     textAlign: 'center',
+    fontWeight: 'bold'
   },
 });
 
-export default StackScreen;
+export default StackListScreen;

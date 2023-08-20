@@ -1,7 +1,8 @@
+// LoginScreen.js
 import React, { useEffect, useState } from 'react'
 import { Image, Text, TextInput, TouchableOpacity, View,  StyleSheet } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { db, auth } from '../firebase/config';
+import { auth } from '../firebase/config';
 
 export default function LoginScreen({navigation}) {
     const [email, setEmail] = useState('');

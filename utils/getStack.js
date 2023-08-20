@@ -1,5 +1,4 @@
-import {db, auth} from '../config';
-
+import { db, auth } from "../firebase/config";
 // Helper function to query for a stack and its cards from Firestore
 const getStack = async (stackId) => {
   try {

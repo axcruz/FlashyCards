@@ -1,4 +1,4 @@
-import {db, auth} from '../config';
+import { db, auth } from "../firebase/config";
 
 // Helper function to get all stacks
 const getAllStacks = async () => {

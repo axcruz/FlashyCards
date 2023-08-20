@@ -1,7 +1,7 @@
-import { db, auth } from "../config";
+import { db, auth } from "../firebase/config";
 
 // Helper function to add a card to a stack and increment cardCount
-const addCardToStack = async (stackId, cardData) => {
+const deleteCard = async (stackId, cardId) => {
   try {
     const stackRef = db.collection('stacks').doc(stackId);
 
@@ -12,9 +12,9 @@ const addCardToStack = async (stackId, cardData) => {
       if (!stackDoc.exists) {
         throw new Error('Stack not found');
       }
-
+      
       const currentCardCount = stackDoc.data().cardCount || 0;
-      const newCardCount = currentCardCount + 1;
+      const newCardCount = currentCardCount - 1;
 
       // Update the card count field in the stack document
       transaction.update(stackRef, { cardCount: newCardCount });
@@ -22,16 +22,15 @@ const addCardToStack = async (stackId, cardData) => {
       // Reference to the stack's card collection
       const cardsCollection = stackRef.collection('cards');
 
-      // Add the card data to the collection
-      cardData.author = auth.currentUser.uid;
-      await cardsCollection.add(cardData);
+      // Delete the card data from the collection
+      await cardsCollection.doc(cardId).delete();
     });
 
-    console.log('Card added successfully and cardCount incremented');
+    console.log('Card deleted successfully and cardCount decremented');
   } catch (error) {
-    console.error('Error adding card to stack:', error);
+    console.error('Error deleting card from stack:', error);
     throw error;
   }
 };
 
-export default addCardToStack;
+export default deleteCard;
