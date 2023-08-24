@@ -5,13 +5,14 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { db, auth } from '../firebase/config';
 
 export default function RegistrationScreen({navigation}) {
-    const [fullName, setFullName] = useState('')
+
+    const [displayName, setDisplayName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
 
     const onFooterLinkPress = () => {
-        navigation.navigate('Login')
+        navigation.navigate('Log in')
     }
 
     const onRegisterPress = () => {
@@ -21,28 +22,15 @@ export default function RegistrationScreen({navigation}) {
         }
             auth.createUserWithEmailAndPassword(email, password)
             .then((response) => {
-                const uid = response.user.uid
-                const data = {
-                    id: uid,
-                    email,
-                    fullName,
-                };
-                const usersRef = db.collection('users')
-                usersRef
-                    .doc(uid)
-                    .set(data)
-                    .then(() => {
-                        navigation.navigate('Home', {user: data})
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        alert(error);
-                    });
-            })
-            .catch((error) => {
-                console.log(error);
+                if(response.user) {
+                    navigation.navigate('Stacks');
+                } else {
+                    alert('Unable to register user. Please try again later.');
+                }
+ 
+            }).catch((error) => {
                 alert(error);
-        });
+            });
     }
 
     return (
@@ -56,10 +44,10 @@ export default function RegistrationScreen({navigation}) {
                 />
                 <TextInput
                     style={styles.input}
-                    placeholder='Full Name'
+                    placeholder='Username'
                     placeholderTextColor="#aaaaaa"
-                    onChangeText={(text) => setFullName(text)}
-                    value={fullName}
+                    onChangeText={(text) => setDisplayName(text)}
+                    value={displayName}
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
@@ -98,7 +86,7 @@ export default function RegistrationScreen({navigation}) {
                     <Text style={styles.buttonTitle}>Create account</Text>
                 </TouchableOpacity>
                 <View style={styles.footerView}>
-                    <Text style={styles.footerText}>Already got an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>
+                    <Text style={styles.footerText}>Already have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>
                 </View>
             </KeyboardAwareScrollView>
         </View>

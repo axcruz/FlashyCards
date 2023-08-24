@@ -50,7 +50,7 @@ const App = () => {
         </Stack.Navigator>
       ) : (
         <Stack.Navigator>
-          <Stack.Screen name="Login" component={LoginScreen} options={{ animationTypeForReplace: user ? 'pop' : 'push', }} />
+          <Stack.Screen name="Log in" component={LoginScreen} options={{ animationTypeForReplace: user ? 'pop' : 'push', }} />
           <Stack.Screen name="Registration" component={RegistrationScreen} />
         </Stack.Navigator>
       )

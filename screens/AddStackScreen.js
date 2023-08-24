@@ -4,14 +4,14 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import addStack from '../utils/addStack';
 
 const AddStackScreen = ({ route, navigation }) => {
-    const [stackName, setStackName] = useState('');
+    
+  const [stackName, setStackName] = useState('');
     const [category, setCategory] = useState('');
   
-    // Function to add the stack and card data to Firestore
+    // Function to add a stack to Firestore database
     const handleAddStack = async () => {
-      // Validate inputs (you can add more validation logic as needed)
       if (!stackName.trim() || !category.trim()) {
-        alert('Please fill all fields.');
+        alert('Please fill out all fields.');
         return;
       }
       try {
@@ -19,18 +19,14 @@ const AddStackScreen = ({ route, navigation }) => {
           stackName: stackName,
           category: category,
           cardCount: 0,
-          // Add any other stack properties here
         });
-
         if (newStackId) {
-        navigation.navigate('Manage Cards', { stackId: newStackId });
+          navigation.navigate('Manage Cards', { stackId: newStackId });
         } else {
-          console.error('Error unable to navigate to Manage Cards screen.');
-          alert('An unexpected error occurred.');
+          alert('An unexpected issue occurred. Please try again later.');
         }
       } catch (error) {
         // Handle error
-        console.error(error);
         alert(error);
       }
     };
