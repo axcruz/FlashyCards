@@ -6,7 +6,6 @@ import { db, auth } from '../firebase/config';
 
 export default function RegistrationScreen({navigation}) {
 
-    const [displayName, setDisplayName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
@@ -41,15 +40,6 @@ export default function RegistrationScreen({navigation}) {
                 <Image
                     style={styles.logo}
                     source={require('../assets/icon.png')}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder='Username'
-                    placeholderTextColor="#aaaaaa"
-                    onChangeText={(text) => setDisplayName(text)}
-                    value={displayName}
-                    underlineColorAndroid="transparent"
-                    autoCapitalize="none"
                 />
                 <TextInput
                     style={styles.input}

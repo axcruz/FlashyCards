@@ -19,7 +19,11 @@ const StackDetailScreen = ({ route, navigation }) => {
       try {
         const result = await getStack(stackId);
         setStack(result.stackData);
-        setCards(result.cardsData);
+        if (randomOrder) {
+          setCards(shuffleArray(result.cardsData));
+        } else {
+          setCards(result.cardsData.sort((a,b) => a.order - b.order));
+        }
       } catch (error) {
         // Handle error
         alert('Stack not found. It may have been recently deleted. Navigating back to list.');
@@ -46,7 +50,7 @@ const StackDetailScreen = ({ route, navigation }) => {
     if (randomOrder) {
       setCards(shuffleArray(cards));
     } else {
-
+      setCards(cards.sort((a,b) => a.order - b.order));
     }
   };
 
@@ -95,7 +99,7 @@ const StackDetailScreen = ({ route, navigation }) => {
           </View>
 
           <View style={styles.option}>
-            <Text>Time Per Card (seconds):</Text>
+            <Text>Time Per Card (secs) </Text>
             <TextInput
               style={[
                 styles.configInput,
@@ -104,7 +108,7 @@ const StackDetailScreen = ({ route, navigation }) => {
               value={timePerCardInSeconds}
               onChangeText={setTimePerCardInSeconds}
               keyboardType="numeric"
-              placeholder="Enter time per card"
+              placeholder="Time per card"
               editable={!untimed} // Disable the input when untimed is true
             />
           </View>
@@ -164,7 +168,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'left',
-    padding: 20,
+    padding: 30,
   },
   pageTitle: {
     fontSize: 24,
@@ -181,13 +185,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   configInput: {
-    width: 50,
+    width: 90,
     height: 40,
     borderWidth: 1,
     borderColor: 'gray',
     backgroundColor: 'white',
     borderRadius: 5,
-    padding: 5,
+    paddingLeft: 10,
   },
   startButton: {
     marginTop: 20,

@@ -14,11 +14,8 @@ export default function LoginScreen({navigation}) {
 
     const onLoginPress = () => {
         auth.signInWithEmailAndPassword(email, password)
-        .then((response) => {
-           console.log(response.user);
-        })
+        .then()
         .catch(error => {
-            console.log(error);
             alert(error);
         })
     }

@@ -52,7 +52,6 @@ const CardScreen = ({ route, navigation }) => {
             <Text style={styles.timerText}>{`Time Remaining: ${timeRemaining} seconds`}</Text>
           )}
 
-
           <Text style={[styles.cardLabel]}>
             {showAnswer ? 'Answer' : 'Question'}
           </Text>
@@ -104,6 +103,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding:10
   },
   cardContainer: {
     padding: 5,
