@@ -4,10 +4,12 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator,
 import getStack from '../utils/getStack';
 import deleteStack from '../utils/deleteStack';
 import { getThemeStyles } from '../theme';
+import StackModal from '../components/StackModal';
 
 const StackDetailScreen = ({ route, navigation }) => {
   const { stackId, theme } = route.params;
   const themeStyles = getThemeStyles(theme);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [timePerCardInSeconds, setTimePerCardInSeconds] = useState('60');
   const [randomOrder, setRandomOrder] = useState(false);
@@ -32,7 +34,8 @@ const StackDetailScreen = ({ route, navigation }) => {
       }
     };
     fetchData();
-  }, [stackId]);
+    setIsRefreshing(false);
+  }, [stackId, isRefreshing]);
 
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -131,6 +134,7 @@ const StackDetailScreen = ({ route, navigation }) => {
           <TouchableOpacity style={themeStyles.secondaryButton} onPress={handleManageFlashCards}>
             <Text style={themeStyles.buttonText}>Manage Flashcards</Text>
           </TouchableOpacity>
+          <StackModal mode={'update'} stackId={stackId} theme={theme}/>
           <TouchableOpacity style={themeStyles.dangerButton} onPress={toggleDeleteModal}>
             <Text style={themeStyles.buttonText}>Delete Stack</Text>
           </TouchableOpacity>

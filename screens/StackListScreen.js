@@ -5,7 +5,7 @@ import getAllStacks from '../utils/getAllStacks';
 import { auth } from '../firebase/config';
 import { getThemeStyles } from '../theme';
 
-import AddStackModal from '../components/AddStackModal';
+import StackModal from '../components/StackModal';
 
 const StackListScreen = ({ route, navigation }) => {
   const { theme } = route.params;
@@ -80,12 +80,12 @@ const StackListScreen = ({ route, navigation }) => {
                   <TouchableOpacity
                     style={[themeStyles.card, {
                       marginVertical: 5,
-                      marginLeft: 20,
+                      marginLeft: 10,
                     }]}
                     onPress={() => navigation.navigate('Stack Details', { stackId: item.id, theme })}
                   >
                     <Text style={[themeStyles.titleText, { marginBottom: 8, }]} numberOfLines={1} ellipsizeMode='tail'>{item.stackName}</Text>
-                      <Text style={[themeStyles.subText, {marginLeft: 5}]}>{item.cardCount > 0 ? (`${item.cardCount} Cards`) : ('No Cards')}</Text>
+                      <Text style={[themeStyles.subText, {marginLeft: 3}]}>{item.cardCount > 0 ? (`${item.cardCount} Cards`) : ('No Cards')}</Text>
                   </TouchableOpacity>
                 )}
                 keyExtractor={(item) => item.id.toString()}
@@ -102,7 +102,9 @@ const StackListScreen = ({ route, navigation }) => {
 
   return (
     <View style={[themeStyles.container]}>
-          <AddStackModal theme={theme}/>
+      <View style={[{paddingBottom: 20, borderBottomWidth: 1, borderBottomColor: 'gray'}]}>
+          <StackModal mode={'add'} theme={theme}/>
+          </View>
       <FlatList
         data={Object.entries(groupedStacks)
           .map(([category, stacks]) => ({

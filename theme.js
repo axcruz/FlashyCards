@@ -10,9 +10,11 @@ const colors = {
   danger: '#DC3545', // Danger color
   info: '#17A2B8', // Info color
   warning: '#FFC107', // Warning color
-  backgroundLight: '#F5F5F4',
+  backgroundLight: '#FFFFFF',
   backgroundDark: '#333333',
   backgroundNeutral: '#575757',
+  backgroundPanelLight: '#F5F5F5',
+  backgroundPanelDark: '#606060',
   textLight: 'black',
   textDark: 'white',
   textNeutral: '#888888'
@@ -66,10 +68,10 @@ const defaultStyles = {
   },
   card: {
     paddingVertical: 12,
-    paddingHorizontal: 15,
-    backgroundColor: colors.backgroundLight,
+    paddingHorizontal: 16,
+    backgroundColor: colors.backgroundPanelLight,
     color: colors.textLight,
-    borderColor: colors.textNeutral,
+    borderColor: '#E8E9EB',
     borderWidth: 1,
     borderRadius: 5,
   },
@@ -80,8 +82,8 @@ const defaultStyles = {
     padding: 20
   },
   input: {
-    backgroundColor: colors.backgroundNeutral,
-    color: colors.textDark,
+    backgroundColor: colors.backgroundPanelLight,
+    color: colors.textLight,
     borderWidth: 1,
     borderRadius: 5,
     borderColor: colors.textNeutral,
@@ -182,8 +184,13 @@ const themes = {
     },
     card: {
       ...defaultStyles.card,
-      backgroundColor: colors.backgroundDark,
-      color: colors.textDark
+      //backgroundColor: colors.backgroundDark,
+      color: colors.textDark,
+    },
+    input: {
+      ...defaultStyles.input,
+      backgroundColor: colors.backgroundPanelDark ,
+      color: colors.textDark,
     },
     modalView: {
       ...defaultStyles.modalView,

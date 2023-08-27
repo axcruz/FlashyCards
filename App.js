@@ -24,13 +24,13 @@ const Stack = createStackNavigator();
 
 const App = ({theme}) => {
 
-  //const [scheme, setScheme] = useState(useColorScheme());
-  const [scheme, setScheme] = useState('dark');
+  const [scheme, setScheme] = useState(useColorScheme());
+  //const [scheme, setScheme] = useState('dark');
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(() => {
       setUser(auth.currentUser);
       if (initializing) setInitializing(false);
     })
@@ -47,7 +47,7 @@ const App = ({theme}) => {
             setScheme(newTheme)
           } />),
         }}>
-          <Stack.Screen name="Stacks" component={StackListScreen} initialParams={{ theme : scheme }}/>
+          <Stack.Screen name="Stacks" component={StackListScreen} initialParams={{ theme : scheme }} ptions={{ title: 'My Stacks', }}/>
           <Stack.Screen name="Stack Details" component={StackDetailScreen} initialParams={{ theme }} options={{ title: 'Details', }} />
           <Stack.Screen name="Manage Cards" component={ManageCardsScreen} initialParams={{ theme }} />
           <Stack.Screen name="Cards" component={CardScreen} initialParams={{ theme }}/>

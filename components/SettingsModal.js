@@ -59,10 +59,10 @@ const SettingsModal = (props) => {
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={[themeStyles.text]}>Theme</Text>
               <DropDownPicker
-              style={[themeStyles.card]}
+              style={[themeStyles.input]}
               textStyle={[themeStyles.subText]}
               containerStyle={{width: '35%', marginLeft: 10, marginTop: 15}}
-              modalContentContainerStyle={[themeStyles.card]}
+              modalContentContainerStyle={[themeStyles.input]}
               open={open}
               setOpen={setOpen}
               onSelectItem={(item) => handleThemeChange(item.value)}

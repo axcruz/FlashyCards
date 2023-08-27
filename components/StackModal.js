@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Modal, Text, TextInput } from 'react-native';
 import addStack from '../utils/addStack';
+import updateStack from '../utils/updateStack';
 import { getThemeStyles } from '../theme';
 
-const SettingsModal = (props) => {
+const StackModal = (props) => {
 
+    const modalMode = props.mode;
+    const stackId = props.stackId;
     const themeStyles = getThemeStyles(props.theme);
     const [modalVisible, setModalVisible] = useState(false);
     const [stackName, setStackName] = useState('');
@@ -16,13 +19,14 @@ const SettingsModal = (props) => {
         setCategory('');
     }
 
-    // Function to add a stack to Firestore database
-    const handleAddStack = async () => {
+    // Function to add/update a stack to Firestore database
+    const handleSubmit = async () => {
         if (!stackName.trim() || !category.trim()) {
             alert('Please fill out all fields.');
             return;
         }
         try {
+            if (modalMode == 'add') {
             const newStackId = await addStack({
                 stackName: stackName,
                 category: category,
@@ -35,6 +39,17 @@ const SettingsModal = (props) => {
             } else {
                 alert('An unexpected issue occurred. Please try again later.');
             }
+        } else {
+            await updateStack(stackId, {
+                stackName: stackName,
+                category: category,
+            }).then(() => {
+                setModalVisible(false);
+                setStackName('');
+                setCategory('');
+            }
+            );
+        }
         } catch (error) {
             // Handle error
             alert(error);
@@ -52,7 +67,7 @@ const SettingsModal = (props) => {
                     setModalVisible(!modalVisible);
                 }}>
                 <View style={[themeStyles.modalView]}>
-                    <Text style={[themeStyles.titleText, { marginVertical: 10 }]}>New Stack</Text>
+                    <Text style={[themeStyles.titleText, { marginVertical: 10 }]}>{modalMode == 'add' ? 'New Stack' : 'Update Stack'}</Text>
                     <Text style={[themeStyles.text, { alignSelf: 'flex-start', marginBottom: 5 }]}>Stack Name</Text>
                     <TextInput
                         style={[themeStyles.input, {
@@ -83,8 +98,8 @@ const SettingsModal = (props) => {
                         <TouchableOpacity style={[themeStyles.dangerButton, { marginHorizontal: 5 }]} onPress={toggleModal}>
                             <Text style={themeStyles.buttonText}>Cancel</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={themeStyles.successButton} onPress={handleAddStack}>
-                            <Text style={[themeStyles.buttonText, { marginHorizontal: 5 }]}>Add Stack</Text>
+                        <TouchableOpacity style={themeStyles.successButton} onPress={handleSubmit}>
+                            <Text style={[themeStyles.buttonText, { marginHorizontal: 5 }]}>Submit</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -92,10 +107,10 @@ const SettingsModal = (props) => {
             <TouchableOpacity
                 style={themeStyles.primaryButton}
                 onPress={toggleModal}>
-                <Text style={themeStyles.buttonText}>New Stack</Text>
+                <Text style={themeStyles.buttonText}>{modalMode == 'add' ? 'New Stack' : 'Update Stack'}</Text>
             </TouchableOpacity>
         </>
     );
 };
 
-export default SettingsModal;
+export default StackModal;
