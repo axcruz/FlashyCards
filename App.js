@@ -14,7 +14,6 @@ import { auth } from './firebase/config';
 import CardScreen from './screens/CardScreen';
 import StackListScreen from './screens/StackListScreen';
 import StackDetailScreen from './screens/StackDetailScreen';
-import AddStackScreen from './screens/AddStackScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
 import ManageCardsScreen from './screens/ManageCardsScreen';
@@ -44,11 +43,12 @@ const App = ({theme}) => {
     <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
       {user ? (
         <Stack.Navigator screenOptions={{
-          headerRight: () => (<SettingsModal user={user} />),
+          headerRight: () => (<SettingsModal user={user} theme={scheme} themeHandler={(newTheme) => 
+            setScheme(newTheme)
+          } />),
         }}>
           <Stack.Screen name="Stacks" component={StackListScreen} initialParams={{ theme : scheme }}/>
           <Stack.Screen name="Stack Details" component={StackDetailScreen} initialParams={{ theme }} options={{ title: 'Details', }} />
-          <Stack.Screen name="Add Stack" component={AddStackScreen} initialParams={{ theme }} />
           <Stack.Screen name="Manage Cards" component={ManageCardsScreen} initialParams={{ theme }} />
           <Stack.Screen name="Cards" component={CardScreen} initialParams={{ theme }}/>
         </Stack.Navigator>

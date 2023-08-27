@@ -63,7 +63,8 @@ const StackListScreen = ({ route, navigation }) => {
             <TouchableOpacity
               style={[themeStyles.card, {
                 flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', justifyContent: 'space-between',
-                marginVertical: 2,
+                marginTop: 10,
+                marginBottom: 2,
               }]}
               onPress={() => toggleCategory(item.title)}
             >
@@ -101,12 +102,6 @@ const StackListScreen = ({ route, navigation }) => {
 
   return (
     <View style={[themeStyles.container]}>
-                <TouchableOpacity
-            style={[themeStyles.primaryButton]}
-            onPress={() => navigation.navigate('Add Stack')}
-          >
-            <Text style={[themeStyles.buttonText]}>New Stack</Text>
-          </TouchableOpacity>
           <AddStackModal theme={theme}/>
       <FlatList
         data={Object.entries(groupedStacks)
@@ -117,6 +112,9 @@ const StackListScreen = ({ route, navigation }) => {
         refreshControl={
           <RefreshControl refreshing={refreshing}
             onRefresh={onRefresh}
+            tintColor={'gray'}
+            title="Refreshing"
+            titleColor={'gray'}
           />
         }
         renderItem={renderItem}

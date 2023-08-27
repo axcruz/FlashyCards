@@ -12,6 +12,7 @@ const colors = {
   warning: '#FFC107', // Warning color
   backgroundLight: '#F5F5F4',
   backgroundDark: '#333333',
+  backgroundNeutral: '#575757',
   textLight: 'black',
   textDark: 'white',
   textNeutral: '#888888'
@@ -66,18 +67,24 @@ const defaultStyles = {
   card: {
     paddingVertical: 12,
     paddingHorizontal: 15,
-    backgroundColor: 'white',
+    backgroundColor: colors.backgroundLight,
+    color: colors.textLight,
     borderColor: colors.textNeutral,
     borderWidth: 1,
     borderRadius: 5,
   },
+  modalView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20
+  },
   input: {
+    backgroundColor: colors.backgroundNeutral,
+    color: colors.textDark,
     borderWidth: 1,
-    borderColor: colors.textNeutral,
-    backgroundColor: colors.backgroundLight,
-    color: colors.textNeutral,
     borderRadius: 5,
-    paddingLeft: 10,
+    borderColor: colors.textNeutral,
   }
 };
 
@@ -117,10 +124,10 @@ const themes = {
       ...defaultStyles.button,
       backgroundColor: colors.warning, // Warning button background color
     },
-    sectionHeader: {
-      ...defaultStyles.sectionHeader,
-      backgroundColor: 'white'
-    },
+    modalView: {
+      ...defaultStyles.modalView,
+      backgroundColor: colors.backgroundLight
+    }
     // Add more styles for the light theme here
   },
   dark: {
@@ -175,10 +182,11 @@ const themes = {
     },
     card: {
       ...defaultStyles.card,
-      backgroundColor: colors.backgroundDark
+      backgroundColor: colors.backgroundDark,
+      color: colors.textDark
     },
-    input: {
-      ...defaultStyles.input,
+    modalView: {
+      ...defaultStyles.modalView,
       backgroundColor: colors.backgroundDark
     }
     // Add more styles for the dark theme here
