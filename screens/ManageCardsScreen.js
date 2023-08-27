@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator, TextInput, Modal, ScrollView } from 'react-native';
-import { db, auth } from '../firebase/config';
-
+import { getThemeStyles } from '../theme';
 import getStack from '../utils/getStack';
 import addCard from '../utils/addCard';
 import updateCard from '../utils/updateCard';
 import deleteCard from '../utils/deleteCard';
 
 const ManageCardsScreen = ({ route, navigation }) => {
-  const { stackId } = route.params;
+  const { stackId, theme } = route.params;
+  // Get theme styling
+  const themeStyles = getThemeStyles(theme);
   const [cards, setCards] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAddingCard, setIsAddingCard] = useState(false); // State to control the modal
@@ -91,14 +92,14 @@ const ManageCardsScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={themeStyles.container}>
       {cards ? (
         <>
         <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('Stack Details' , {stackId})}>
+          <TouchableOpacity style={themeStyles.primaryButton} onPress={() => navigation.navigate('Stack Details' , {stackId})}>
             <Text>Stack Details</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.addButton} onPress={handleAddCard}>
+          <TouchableOpacity style={themeStyles.secondaryButton} onPress={handleAddCard}>
             <Text>Add Card</Text>
           </TouchableOpacity>
           </View>

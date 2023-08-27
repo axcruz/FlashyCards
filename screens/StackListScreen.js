@@ -1,20 +1,22 @@
 // StackListScreen.js
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, RefreshControl } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
 import getAllStacks from '../utils/getAllStacks';
 import { auth } from '../firebase/config';
 import { getThemeStyles } from '../theme';
 
+import AddStackModal from '../components/AddStackModal';
+
 const StackListScreen = ({ route, navigation }) => {
   const { theme } = route.params;
+  // Get theme styling
+  const themeStyles = getThemeStyles(theme);
   const [refreshing, setRefreshing] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState([]);
   const [stacks, setStacks] = useState([]);
 
-  const themeStyles = getThemeStyles(theme);
-
   useEffect(() => {
-    // Fetch stacks every time the screen is rendered
+    // Fetch stack data
     if (auth.currentUser) {
       const fetchStacks = async () => {
         try {
@@ -34,7 +36,6 @@ const StackListScreen = ({ route, navigation }) => {
       setRefreshing(false);
     }, 2000);
   }, []);
-
 
   // Function to group stacks by category for Accordion
   const groupedStacks = stacks.reduce((result, stack) => {
@@ -60,28 +61,30 @@ const StackListScreen = ({ route, navigation }) => {
         {stacks ? (
           <>
             <TouchableOpacity
-              style={[styles.sectionHeader]}
+              style={[themeStyles.card, {
+                flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', justifyContent: 'space-between',
+                marginVertical: 2,
+              }]}
               onPress={() => toggleCategory(item.title)}
             >
-              <Text style={[themeStyles.titleText]} 
-              numberOfLines={1} ellipsizeMode='tail'
+              <Text style={[themeStyles.titleText, { width: '90%' }]}
+                numberOfLines={1} ellipsizeMode='tail'
               >{item.title}</Text>
-              <Text style={styles.arrow}>{isExpanded ? '▼' : '▶'}</Text>
+              <Text style={[themeStyles.text]}>{isExpanded ? '▼' : '▶'}</Text>
             </TouchableOpacity>
             {isExpanded && (
               <FlatList
                 data={item.data}
                 renderItem={({ item }) => (
                   <TouchableOpacity
-                    style={styles.stackItem}
-                    onPress={() => navigation.navigate('Stack Details', { stackId: item.id })}
+                    style={[themeStyles.card, {
+                      marginVertical: 5,
+                      marginLeft: 20,
+                    }]}
+                    onPress={() => navigation.navigate('Stack Details', { stackId: item.id, theme })}
                   >
-                    <Text style={styles.stackName} numberOfLines={1} ellipsizeMode='tail'>{item.stackName}</Text>
-                    {item.cardCount > 0 ? (
-                      <Text style={styles.cardCount}>{`${item.cardCount} Cards`}</Text>
-                    ) : (
-                      <Text style={styles.cardCount}>{'No Cards'}</Text>
-                    )}
+                    <Text style={[themeStyles.titleText, { marginBottom: 8, }]} numberOfLines={1} ellipsizeMode='tail'>{item.stackName}</Text>
+                      <Text style={[themeStyles.subText, {marginLeft: 5}]}>{item.cardCount > 0 ? (`${item.cardCount} Cards`) : ('No Cards')}</Text>
                   </TouchableOpacity>
                 )}
                 keyExtractor={(item) => item.id.toString()}
@@ -89,7 +92,7 @@ const StackListScreen = ({ route, navigation }) => {
             )}
           </>
         ) : (
-          <ActivityIndicator size="large" color="#007AFF" />
+          <ActivityIndicator size="large" />
         )
         }
       </React.Fragment>
@@ -98,6 +101,13 @@ const StackListScreen = ({ route, navigation }) => {
 
   return (
     <View style={[themeStyles.container]}>
+                <TouchableOpacity
+            style={[themeStyles.primaryButton]}
+            onPress={() => navigation.navigate('Add Stack')}
+          >
+            <Text style={[themeStyles.buttonText]}>New Stack</Text>
+          </TouchableOpacity>
+          <AddStackModal theme={theme}/>
       <FlatList
         data={Object.entries(groupedStacks)
           .map(([category, stacks]) => ({
@@ -111,82 +121,13 @@ const StackListScreen = ({ route, navigation }) => {
         }
         renderItem={renderItem}
         keyExtractor={(item) => item.title}
-        ListHeaderComponent={<View style={{ marginBottom: 12 }}>
-          <TouchableOpacity
-            style={[themeStyles.primaryButton]}
-            onPress={() => navigation.navigate('Add Stack')}
-          >
-            <Text style={[themeStyles.buttonText]}>New Stack</Text>
-          </TouchableOpacity></View>}
-        ListFooterComponent={<View style={{ marginBottom: 12 }} />}
-        ListHeaderComponentStyle={{ marginTop: 12 }}
+        ListHeaderComponent={<View style={{ marginBottom: 10 }}/>}
+        ListFooterComponent={<View style={{ marginBottom: 5 }} />}
+        ListHeaderComponentStyle={{ marginTop: 5 }}
       />
       <Text style={[themeStyles.subText, { alignSelf: 'center', marginVertical: 20 }]}>Pull down to refresh</Text>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 5
-  },
-  sectionHeaderText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  arrow: {
-    fontSize: 18,
-  },
-  stackItem: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 5,
-    padding: 16,
-    marginVertical: 10,
-    marginHorizontal: 20,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  stackName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  cardCount: {
-    fontSize: 16,
-    color: '#888888',
-  },
-  addStackButton: {
-    backgroundColor: '#788eec',
-    marginLeft: 30,
-    marginRight: 30,
-    marginTop: 20,
-    marginBottom: 20,
-    height: 48,
-    borderRadius: 5,
-    alignItems: "center",
-    justifyContent: 'center'
-  },
-  addStackButtonText: {
-    fontSize: 18,
-    color: 'white',
-    textAlign: 'center',
-    fontWeight: 'bold'
-  },
-});
 
 export default StackListScreen;

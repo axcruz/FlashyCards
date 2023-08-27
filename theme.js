@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { ColorSpace } from 'react-native-reanimated';
 
 // Define a color palette with named colors
 const colors = {
@@ -53,6 +54,7 @@ const defaultStyles = {
   button: {
     borderRadius: 5,
     padding: 10,
+    margin: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -61,6 +63,22 @@ const defaultStyles = {
     fontWeight: 'bold',
     color: colors.textDark,
   },
+  card: {
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    backgroundColor: 'white',
+    borderColor: colors.textNeutral,
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.textNeutral,
+    backgroundColor: colors.backgroundLight,
+    color: colors.textNeutral,
+    borderRadius: 5,
+    paddingLeft: 10,
+  }
 };
 
 // Define your themes with their respective style variations
@@ -99,13 +117,17 @@ const themes = {
       ...defaultStyles.button,
       backgroundColor: colors.warning, // Warning button background color
     },
+    sectionHeader: {
+      ...defaultStyles.sectionHeader,
+      backgroundColor: 'white'
+    },
     // Add more styles for the light theme here
   },
   dark: {
     ...defaultStyles,
     container: {
       ...defaultStyles.container,
-      backgroundColor: colors.backgroundDark, // Background color for the dark theme
+     // backgroundColor: colors.backgroundDark, // Background color for the dark theme
     },
     text: {
       ...defaultStyles.text,
@@ -151,6 +173,14 @@ const themes = {
       ...defaultStyles.button,
       backgroundColor: colors.warning, // Warning button background color
     },
+    card: {
+      ...defaultStyles.card,
+      backgroundColor: colors.backgroundDark
+    },
+    input: {
+      ...defaultStyles.input,
+      backgroundColor: colors.backgroundDark
+    }
     // Add more styles for the dark theme here
   },
 };
@@ -160,4 +190,4 @@ const getThemeStyles = (theme) => {
   return StyleSheet.create(themes[theme]);
 };
 
-export { getThemeStyles };
+export { getThemeStyles, colors, fonts };

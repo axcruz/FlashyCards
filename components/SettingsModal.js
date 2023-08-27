@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { View, TouchableOpacity, Modal, Text, StyleSheet, ActivityIndicator} from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { auth } from '../firebase/config';
 
-const UserModal = (props) => {
+const SettingsModal = (props) => {
   const [user, setUser] = useState();
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     setUser(props.user);
   }, [props.user]);
+
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  }
 
   const handleLogout = () => {
     setModalVisible(false);
@@ -48,8 +52,8 @@ const UserModal = (props) => {
       </Modal>
       <TouchableOpacity
         style={styles.userIcon}
-        onPress={() => setModalVisible(true)}>
-        <Icon name="user" size={30} color="#788eec" />
+        onPress={toggleModal}>
+        <Icon name="gear" size={28} color="gray"/>
       </TouchableOpacity>
       </>
     ) : (
@@ -111,4 +115,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserModal;
+export default SettingsModal;

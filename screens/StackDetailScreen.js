@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Switch, Modal } from 'react-native';
 import getStack from '../utils/getStack';
 import deleteStack from '../utils/deleteStack';
-
+import { getThemeStyles } from '../theme';
 
 const StackDetailScreen = ({ route, navigation }) => {
-  const { stackId } = route.params;
+  const { stackId, theme } = route.params;
+  const themeStyles = getThemeStyles(theme);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [timePerCardInSeconds, setTimePerCardInSeconds] = useState('60');
   const [randomOrder, setRandomOrder] = useState(false);
@@ -82,12 +83,12 @@ const StackDetailScreen = ({ route, navigation }) => {
   return (
     <>
       {stack ?
-        <View style={styles.container}>
-          <Text style={styles.pageTitle}>{stack.stackName}</Text>
-          <Text style={styles.pageSubtitle}>{stack.category}</Text>
+        <View style={themeStyles.container}>
+          <Text style={themeStyles.titleText}>{stack.stackName}</Text>
+          <Text style={themeStyles.text}>{stack.category}</Text>
 
           <View style={styles.option}>
-            <Text>Untimed</Text>
+            <Text style={themeStyles.subText}>Untimed</Text>
             <Switch
               style={{ margin: 5 }}
               trackColor={{ false: '#767577', true: '#788eec' }}
@@ -99,7 +100,7 @@ const StackDetailScreen = ({ route, navigation }) => {
           </View>
 
           <View style={styles.option}>
-            <Text>Time Per Card (secs) </Text>
+            <Text style={themeStyles.subText}>Time Per Card (secs) </Text>
             <TextInput
               style={[
                 styles.configInput,
@@ -113,9 +114,9 @@ const StackDetailScreen = ({ route, navigation }) => {
             />
           </View>
           <View style={styles.option}>
-            <Text>Randomize</Text>
+            <Text style={themeStyles.subText}>Randomize</Text>
             <Switch
-              style={{ margin: 5 }}
+              style={{ margin: 3 }}
               trackColor={{ false: '#767577', true: '#788eec' }}
               thumbColor={'#f4f3f4'}
               ios_backgroundColor="#3e3e3e"
@@ -124,14 +125,14 @@ const StackDetailScreen = ({ route, navigation }) => {
             />
           </View>
 
-          <TouchableOpacity style={styles.startButton} onPress={handleStartFlashcards}>
-            <Text style={styles.buttonText}>Start Flashcards</Text>
+          <TouchableOpacity style={themeStyles.primaryButton} onPress={handleStartFlashcards}>
+            <Text style={themeStyles.buttonText}>Start</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.manageButton} onPress={handleManageFlashCards}>
-            <Text style={styles.buttonText}>Manage Flashcards</Text>
+          <TouchableOpacity style={themeStyles.secondaryButton} onPress={handleManageFlashCards}>
+            <Text style={themeStyles.buttonText}>Manage Flashcards</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.deleteButton} onPress={toggleDeleteModal}>
-            <Text style={styles.buttonText}>Delete Stack</Text>
+          <TouchableOpacity style={themeStyles.dangerButton} onPress={toggleDeleteModal}>
+            <Text style={themeStyles.buttonText}>Delete Stack</Text>
           </TouchableOpacity>
         </View>
         : (
@@ -142,7 +143,7 @@ const StackDetailScreen = ({ route, navigation }) => {
 
       <Modal
         visible={isDeleteModalVisible}
-        transparent={true}
+        transparent={false}
         animationType="slide"
       >
         <View style={styles.modalView}>
@@ -189,7 +190,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderWidth: 1,
     borderColor: 'gray',
-    backgroundColor: 'white',
+    backgroundColor: 'black',
+    color: 'gray',
     borderRadius: 5,
     paddingLeft: 10,
   },

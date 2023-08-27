@@ -1,7 +1,8 @@
 // App.js
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
-import { useColorScheme } from 'react-native';
+import { View, SafeAreaView, useColorScheme } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, DefaultTheme,
   DarkTheme, } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -18,14 +19,14 @@ import LoginScreen from './screens/LoginScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
 import ManageCardsScreen from './screens/ManageCardsScreen';
 
-import UserModal from './components/UserModal';
+import SettingsModal from './components/SettingsModal';
 
 const Stack = createStackNavigator();
 
 const App = ({theme}) => {
 
-  const [scheme, setScheme] = useState(useColorScheme());
-
+  //const [scheme, setScheme] = useState(useColorScheme());
+  const [scheme, setScheme] = useState('dark');
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(null);
 
@@ -39,14 +40,14 @@ const App = ({theme}) => {
   if (initializing) return null;
 
   return (
+    <View style={{ flex: 1 }}>
     <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
       {user ? (
-        <Stack.Navigator>
-          <Stack.Screen name="Stacks" component={StackListScreen} initialParams={{ theme : scheme }}
-            options={{
-              headerRight: () => (<UserModal user={user} />),
-            }} />
-          <Stack.Screen name="Stack Details" component={StackDetailScreen} initialParams={{ theme }} options={{ title: 'Details' }} />
+        <Stack.Navigator screenOptions={{
+          headerRight: () => (<SettingsModal user={user} />),
+        }}>
+          <Stack.Screen name="Stacks" component={StackListScreen} initialParams={{ theme : scheme }}/>
+          <Stack.Screen name="Stack Details" component={StackDetailScreen} initialParams={{ theme }} options={{ title: 'Details', }} />
           <Stack.Screen name="Add Stack" component={AddStackScreen} initialParams={{ theme }} />
           <Stack.Screen name="Manage Cards" component={ManageCardsScreen} initialParams={{ theme }} />
           <Stack.Screen name="Cards" component={CardScreen} initialParams={{ theme }}/>
@@ -59,6 +60,9 @@ const App = ({theme}) => {
       )
       }
     </NavigationContainer>
+    <StatusBar style="light" />
+    </View>
+   
   );
 };
 
