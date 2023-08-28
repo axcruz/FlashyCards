@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native';
-import { ColorSpace } from 'react-native-reanimated';
 
 // Define a color palette with named colors
 const colors = {
@@ -10,6 +9,7 @@ const colors = {
   danger: '#DC3545', // Danger color
   info: '#17A2B8', // Info color
   warning: '#FFC107', // Warning color
+  config: 'gray',
   backgroundLight: '#FFFFFF',
   backgroundDark: '#333333',
   backgroundNeutral: '#575757',
@@ -68,7 +68,7 @@ const defaultStyles = {
   },
   card: {
     paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: 15,
     backgroundColor: colors.backgroundPanelLight,
     color: colors.textLight,
     borderColor: '#E8E9EB',
@@ -79,7 +79,7 @@ const defaultStyles = {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20
+    padding: 25
   },
   input: {
     backgroundColor: colors.backgroundPanelLight,
@@ -92,39 +92,44 @@ const defaultStyles = {
 
 // Define your themes with their respective style variations
 const themes = {
+
   light: {
     ...defaultStyles,
     container: {
       ...defaultStyles.container,
-      backgroundColor: colors.backgroundLight, // Background color for the light theme
+      backgroundColor: colors.backgroundLight,
     },
     primaryButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.primary, // Primary button background color
+      backgroundColor: colors.primary,
     },
     secondaryButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.secondary, // Secondary button background color
+      backgroundColor: colors.secondary, 
     },
     tertiaryButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.tertiary, // Tertiary button background color
+      backgroundColor: colors.tertiary,
     },
     successButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.success, // Success button background color
+      backgroundColor: colors.success,
     },
     dangerButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.danger, // Danger button background color
+      backgroundColor: colors.danger,
     },
     infoButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.info, // Info button background color
+      backgroundColor: colors.info,
     },
     warningButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.warning, // Warning button background color
+      backgroundColor: colors.warning
+    },
+    configButton: {
+      ...defaultStyles.button,
+      backgroundColor: colors.config
     },
     modalView: {
       ...defaultStyles.modalView,
@@ -132,64 +137,68 @@ const themes = {
     }
     // Add more styles for the light theme here
   },
+
   dark: {
     ...defaultStyles,
     container: {
       ...defaultStyles.container,
-     // backgroundColor: colors.backgroundDark, // Background color for the dark theme
+     backgroundColor: colors.backgroundDark,
     },
     text: {
       ...defaultStyles.text,
-      color: colors.textDark, // Text color for the dark theme
+      color: colors.textDark,
     },
     subText: {
         ...defaultStyles.subText,
-        color: colors.textDark, // Text color for the dark theme
+        color: colors.textDark,
       },
     headerText: {
         ...defaultStyles.headerText,
-        color: colors.textDark, // Text color for the dark theme
+        color: colors.textDark,
       },
       titleText: {
         ...defaultStyles.titleText,
-        color: colors.textDark, // Text color for the dark theme
+        color: colors.textDark,
       },
     primaryButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.primary, // Primary button background color
+      backgroundColor: colors.primary,
     },
     secondaryButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.secondary, // Secondary button background color
+      backgroundColor: colors.secondary,
     },
     tertiaryButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.tertiary, // Tertiary button background color
+      backgroundColor: colors.tertiary,
     },
     successButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.success, // Success button background color
+      backgroundColor: colors.success,
     },
     dangerButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.danger, // Danger button background color
+      backgroundColor: colors.danger,
     },
     infoButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.info, // Info button background color
+      backgroundColor: colors.info,
     },
     warningButton: {
       ...defaultStyles.button,
-      backgroundColor: colors.warning, // Warning button background color
+      backgroundColor: colors.warning,
+    },
+    configButton: {
+      ...defaultStyles.button,
+      backgroundColor: colors.config
     },
     card: {
       ...defaultStyles.card,
-      //backgroundColor: colors.backgroundDark,
       color: colors.textDark,
     },
     input: {
       ...defaultStyles.input,
-      backgroundColor: colors.backgroundPanelDark ,
+      backgroundColor: colors.backgroundPanelDark,
       color: colors.textDark,
     },
     modalView: {

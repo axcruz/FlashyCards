@@ -1,12 +1,17 @@
 // LoginScreen.js
-import React, { useEffect, useState } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View,  StyleSheet } from 'react-native'
+import React, { useState } from 'react'
+import { Image, Text, TextInput, TouchableOpacity, View, StyleSheet, useColorScheme } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { auth } from '../firebase/config';
 
-export default function LoginScreen({navigation}) {
+import { getThemeStyles } from '../styles/theme';
+
+const LoginScreen = ({navigation }) => {
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const themeStyles = useState(getThemeStyles(useColorScheme()));
 
     const onFooterLinkPress = () => {
         navigation.navigate('Registration');
@@ -14,14 +19,14 @@ export default function LoginScreen({navigation}) {
 
     const onLoginPress = () => {
         auth.signInWithEmailAndPassword(email, password)
-        .then()
-        .catch(error => {
-            alert(error);
-        })
+            .then()
+            .catch(error => {
+                alert(error);
+            });
     }
 
     return (
-        <View style={styles.container}>
+        <View style={themeStyles.container}>
             <KeyboardAwareScrollView
                 style={{ flex: 1, width: '100%' }}
                 keyboardShouldPersistTaps="always">
@@ -30,7 +35,8 @@ export default function LoginScreen({navigation}) {
                     source={require('../assets/icon.png')}
                 />
                 <TextInput
-                    style={styles.input}
+                    style={[themeStyles.input, styles.input
+                    ]}
                     placeholder='E-mail'
                     placeholderTextColor="#aaaaaa"
                     onChangeText={(text) => setEmail(text)}
@@ -39,7 +45,7 @@ export default function LoginScreen({navigation}) {
                     autoCapitalize="none"
                 />
                 <TextInput
-                    style={styles.input}
+                    style={[themeStyles.input, styles.input]}
                     placeholderTextColor="#aaaaaa"
                     secureTextEntry
                     placeholder='Password'
@@ -49,12 +55,17 @@ export default function LoginScreen({navigation}) {
                     autoCapitalize="none"
                 />
                 <TouchableOpacity
-                    style={styles.button}
+                    style={[themeStyles.primaryButton, {
+                        marginLeft: 30,
+                        marginRight: 30,
+                        marginTop: 20,
+                        height: 48
+                    }]}
                     onPress={() => onLoginPress()}>
-                    <Text style={styles.buttonTitle}>Log in</Text>
+                    <Text style={themeStyles.buttonText}>Log in</Text>
                 </TouchableOpacity>
                 <View style={styles.footerView}>
-                    <Text style={styles.footerText}>Don't have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Sign up</Text></Text>
+                    <Text style={styles.subText}>Don't have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Sign up</Text></Text>
                 </View>
             </KeyboardAwareScrollView>
         </View>
@@ -62,17 +73,10 @@ export default function LoginScreen({navigation}) {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center'
-    },
-    title: {
-
-    },
     logo: {
         flex: 1,
-        height: 120,
-        width: 120,
+        height: 100,
+        width: 100,
         alignSelf: "center",
         margin: 30
     },
@@ -80,27 +84,11 @@ const styles = StyleSheet.create({
         height: 48,
         borderRadius: 5,
         overflow: 'hidden',
-        backgroundColor: 'white',
         marginTop: 10,
         marginBottom: 10,
         marginLeft: 30,
         marginRight: 30,
         paddingLeft: 16
-    },
-    button: {
-        backgroundColor: '#788eec',
-        marginLeft: 30,
-        marginRight: 30,
-        marginTop: 20,
-        height: 48,
-        borderRadius: 5,
-        alignItems: "center",
-        justifyContent: 'center'
-    },
-    buttonTitle: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: "bold"
     },
     footerView: {
         flex: 1,
@@ -112,8 +100,10 @@ const styles = StyleSheet.create({
         color: '#2e2e2d'
     },
     footerLink: {
-        color: "#788eec",
+        color: "blue",
         fontWeight: "bold",
         fontSize: 16
     }
 });
+
+export default LoginScreen;

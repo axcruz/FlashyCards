@@ -1,19 +1,22 @@
 // StackListScreen.js
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, RefreshControl, ActivityIndicator, useColorScheme } from 'react-native';
 import getAllStacks from '../utils/getAllStacks';
 import { auth } from '../firebase/config';
-import { getThemeStyles } from '../theme';
 
+import LoadingIndicator from '../components/LoadingIndicator';
 import StackModal from '../components/StackModal';
+import SettingsModal from '../components/SettingsModal';
+
+import { getThemeStyles } from '../styles/theme';
 
 const StackListScreen = ({ route, navigation }) => {
-  const { theme } = route.params;
-  // Get theme styling
-  const themeStyles = getThemeStyles(theme);
+
   const [refreshing, setRefreshing] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState([]);
   const [stacks, setStacks] = useState([]);
+  const [expandedCategories, setExpandedCategories] = useState([]);
+
+  const themeStyles = getThemeStyles(useColorScheme());
 
   useEffect(() => {
     // Fetch stack data
@@ -80,12 +83,12 @@ const StackListScreen = ({ route, navigation }) => {
                   <TouchableOpacity
                     style={[themeStyles.card, {
                       marginVertical: 5,
-                      marginLeft: 10,
+                      marginLeft: 30,
                     }]}
-                    onPress={() => navigation.navigate('Stack Details', { stackId: item.id, theme })}
+                    onPress={() => navigation.navigate('Stack Details', { stackId: item.id})}
                   >
                     <Text style={[themeStyles.titleText, { marginBottom: 8, }]} numberOfLines={1} ellipsizeMode='tail'>{item.stackName}</Text>
-                      <Text style={[themeStyles.subText, {marginLeft: 3}]}>{item.cardCount > 0 ? (`${item.cardCount} Cards`) : ('No Cards')}</Text>
+                    <Text style={[themeStyles.subText, { marginLeft: 3 }]}>{item.cardCount > 0 ? (`${item.cardCount} Cards`) : ('No Cards')}</Text>
                   </TouchableOpacity>
                 )}
                 keyExtractor={(item) => item.id.toString()}
@@ -93,7 +96,7 @@ const StackListScreen = ({ route, navigation }) => {
             )}
           </>
         ) : (
-          <ActivityIndicator size="large" />
+          <ActivityIndicator size="large" style={{ justifyContent: "center" }} />
         )
         }
       </React.Fragment>
@@ -101,32 +104,38 @@ const StackListScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={[themeStyles.container]}>
-      <View style={[{paddingBottom: 20, borderBottomWidth: 1, borderBottomColor: 'gray'}]}>
-          <StackModal mode={'add'} theme={theme}/>
+    <>
+      {themeStyles ? (
+        <View style={[themeStyles.container]}>
+          <View style={{ flexDirection: 'row', paddingBottom: 10, marginBottom: 10, borderBottomWidth: 1, borderBottomColor: 'gray' }}>
+            <StackModal mode={'add'} onRefresh={onRefresh} />
+            <SettingsModal onRefresh={onRefresh} />
           </View>
-      <FlatList
-        data={Object.entries(groupedStacks)
-          .map(([category, stacks]) => ({
-            title: category,
-            data: stacks,
-          }))}
-        refreshControl={
-          <RefreshControl refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={'gray'}
-            title="Refreshing"
-            titleColor={'gray'}
+          <FlatList
+            data={Object.entries(groupedStacks)
+              .map(([category, stacks]) => ({
+                title: category,
+                data: stacks,
+              }))}
+            refreshControl={
+              <RefreshControl refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={'gray'}
+                title="Refreshing"
+                titleColor={'gray'}
+              />
+            }
+            renderItem={renderItem}
+            keyExtractor={(item) => item.title}
+            ListHeaderComponent={<View style={{ marginBottom: 10 }} />}
+            ListFooterComponent={<View style={{ marginTop: 10 }} />}
+            ListHeaderComponentStyle={{ marginTop: 5 }}
           />
-        }
-        renderItem={renderItem}
-        keyExtractor={(item) => item.title}
-        ListHeaderComponent={<View style={{ marginBottom: 10 }}/>}
-        ListFooterComponent={<View style={{ marginBottom: 5 }} />}
-        ListHeaderComponentStyle={{ marginTop: 5 }}
-      />
-      <Text style={[themeStyles.subText, { alignSelf: 'center', marginVertical: 20 }]}>Pull down to refresh</Text>
-    </View>
+        </View>
+      ) : (
+        <LoadingIndicator />
+      )}
+    </>
   );
 };
 

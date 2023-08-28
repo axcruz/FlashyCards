@@ -1,15 +1,25 @@
 // CardScreen.js
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, useColorScheme } from 'react-native';
+
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { getThemeStyles } from '../styles/theme';
+
 
 const CardScreen = ({ route, navigation }) => {
+
   const { stackId, isUntimed, timePerCardInSeconds, stackCards } = route.params;
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(timePerCardInSeconds);
+  
   const timerRef = useRef(null);
   const cards = stackCards;
   const totalCards = cards.length;
+
+  // Get theme styling
+  const themeStyles = getThemeStyles(useColorScheme());
 
   const handlePreviousCard = () => {
     setShowAnswer(false);
@@ -45,20 +55,23 @@ const CardScreen = ({ route, navigation }) => {
 
 
   return (
-    <View style={styles.container}>
+    <View style={[themeStyles.container, {
+      justifyContent: 'center',
+      alignItems: 'center'
+    }]}>
       {currentIndex < totalCards ? (
         <>
           {!isUntimed && (
-            <Text style={styles.timerText}>{`Time Remaining: ${timeRemaining} seconds`}</Text>
+            <Text style={themeStyles.text}>{`Time Remaining: ${timeRemaining} seconds`}</Text>
           )}
 
-          <Text style={[styles.cardLabel]}>
+          <Text style={[themeStyles.titleText, { margin: 10 }]}>
             {showAnswer ? 'Answer' : 'Question'}
           </Text>
 
-          <View style={{ width: '90%', height: '50%', backgroundColor: 'white', borderRadius: 10 }}>
+          <View style={[themeStyles.card, { width: '100%', height: '50%' }]}>
             <ScrollView>
-              <Text style={[styles.cardText]}>
+              <Text style={[themeStyles.text]}>
                 {showAnswer ? cards[currentIndex].answer : cards[currentIndex].question}
               </Text>
             </ScrollView>
@@ -67,29 +80,29 @@ const CardScreen = ({ route, navigation }) => {
           <TouchableOpacity style={{ alignSelf: 'flex-end', marginRight: 25, marginTop: 10 }}
             onPress={() => setShowAnswer(!showAnswer)}
           >
-            <Text style={[styles.footerLink]}>{showAnswer ? 'Show Question' : 'Show Answer'}</Text>
+            <Text style={[themeStyles.text, { color: "blue" }]}>{showAnswer ? 'Show Question' : 'Show Answer'}</Text>
           </TouchableOpacity>
 
-<View style={{flexDirection: 'row'}}>
-          {currentIndex > 0 && (
-            <TouchableOpacity style={styles.nextButton} onPress={handlePreviousCard}>
-              <Text style={styles.nextButtonText}>Prev</Text>
+          <View style={{ flexDirection: 'row', marginTop: 20 }}>
+            {currentIndex > 0 && (
+              <TouchableOpacity style={[themeStyles.primaryButton, { marginHorizontal: 5 }]} onPress={handlePreviousCard}>
+                <Ionicons name="chevron-back-sharp" size={24} color="white" />
+              </TouchableOpacity>
+            )
+            }
+
+            <TouchableOpacity style={[themeStyles.primaryButton, { marginHorizontal: 5 }]} onPress={handleNextCard}>
+              <Ionicons name="chevron-forward-sharp" size={24} color="white" />
             </TouchableOpacity>
-          )
-          }
-
-          <TouchableOpacity style={styles.nextButton} onPress={handleNextCard}>
-            <Text style={styles.nextButtonText}>Next</Text>
-          </TouchableOpacity>
           </View>
         </>
       ) : (
         <>
-          <Text style={styles.reviewStatus}>You have reviewed all cards!</Text>
-          <TouchableOpacity style={{margin: 5}}
+          <Text style={themeStyles.titleText}>You have reviewed all cards!</Text>
+          <TouchableOpacity style={{ margin: 5 }}
             onPress={() => navigation.navigate('Stack Details', { stackId: stackId })}
           >
-            <Text style={[styles.footerLink]}>Start Over</Text>
+            <Text style={[themeStyles.text, { color: "blue" }]}>Start Over</Text>
           </TouchableOpacity>
         </>
       )}
@@ -103,7 +116,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding:10
+    padding: 10
   },
   cardContainer: {
     padding: 5,
@@ -153,7 +166,7 @@ const styles = StyleSheet.create({
     color: "#788eec",
     fontWeight: "bold",
     fontSize: 16
-}
+  }
 });
 
 export default CardScreen;

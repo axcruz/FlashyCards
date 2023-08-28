@@ -1,22 +1,28 @@
-import React, { useState } from 'react';
-import { View, TouchableOpacity, Modal, Text, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TouchableOpacity, Modal, Text, TextInput, useColorScheme } from 'react-native';
 import addStack from '../utils/addStack';
 import updateStack from '../utils/updateStack';
-import { getThemeStyles } from '../theme';
+import { getThemeStyles } from '../styles/theme';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const StackModal = (props) => {
 
-    const modalMode = props.mode;
-    const stackId = props.stackId;
-    const themeStyles = getThemeStyles(props.theme);
     const [modalVisible, setModalVisible] = useState(false);
     const [stackName, setStackName] = useState('');
     const [category, setCategory] = useState('');
+    
+    const modalMode = props.mode;
+    const stackId = props.stackId;
+    const themeStyles = getThemeStyles(useColorScheme());
 
-    const toggleModal = () => {
+    const toggleStackModal = () => {
         setModalVisible(!modalVisible);
         setStackName('');
         setCategory('');
+    }
+
+    const handleRefresh = () => {
+        props.onRefresh?.();
     }
 
     // Function to add/update a stack to Firestore database
@@ -50,6 +56,7 @@ const StackModal = (props) => {
             }
             );
         }
+        handleRefresh();
         } catch (error) {
             // Handle error
             alert(error);
@@ -95,19 +102,23 @@ const StackModal = (props) => {
                         onChangeText={setCategory}
                     />
                     <View style={{ flexDirection: 'row', marginTop: 20 }}>
-                        <TouchableOpacity style={[themeStyles.dangerButton, { marginHorizontal: 5 }]} onPress={toggleModal}>
-                            <Text style={themeStyles.buttonText}>Cancel</Text>
+                        <TouchableOpacity style={[themeStyles.configButton, { marginHorizontal: 5 }]} onPress={toggleStackModal}>
+                        <Ionicons name="return-down-back" size={24} color="white" />
                         </TouchableOpacity>
-                        <TouchableOpacity style={themeStyles.successButton} onPress={handleSubmit}>
-                            <Text style={[themeStyles.buttonText, { marginHorizontal: 5 }]}>Submit</Text>
+                        <TouchableOpacity style={[themeStyles.successButton, {marginHorizontal: 5}]} onPress={handleSubmit}>
+                            <Text style={themeStyles.buttonText}>Submit</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
             <TouchableOpacity
-                style={themeStyles.primaryButton}
-                onPress={toggleModal}>
-                <Text style={themeStyles.buttonText}>{modalMode == 'add' ? 'New Stack' : 'Update Stack'}</Text>
+                style={[themeStyles.tertiaryButton, {marginHorizontal: 5}]}
+                onPress={toggleStackModal}>
+                    {modalMode == 'add' ? (
+                <Ionicons name="add-circle-sharp" size={24} color="white" />
+                ) : (
+                    <Ionicons name="create" size={24} color="white" />
+                )}
             </TouchableOpacity>
         </>
     );

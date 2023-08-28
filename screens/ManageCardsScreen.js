@@ -1,22 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator, TextInput, Modal, ScrollView } from 'react-native';
-import { getThemeStyles } from '../theme';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator, TextInput, Modal, RefreshControl, useColorScheme } from 'react-native';
 import getStack from '../utils/getStack';
 import addCard from '../utils/addCard';
 import updateCard from '../utils/updateCard';
 import deleteCard from '../utils/deleteCard';
 
+import SettingsModal from '../components/SettingsModal';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
+import { getThemeStyles } from '../styles/theme';
+
+
 const ManageCardsScreen = ({ route, navigation }) => {
-  const { stackId, theme } = route.params;
-  // Get theme styling
-  const themeStyles = getThemeStyles(theme);
+  
+  const { stackId} = route.params;
+  
+  const [refreshing, setRefreshing] = useState(false);
   const [cards, setCards] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAddingCard, setIsAddingCard] = useState(false); // State to control the modal
   const [isEditingCard, setIsEditingCard] = useState(false); // State to control the modal
+  const [isDeletingCard, setIsDeletingCard] = useState(false);
   const [cardId, setCardId] = useState('');
   const [question, setQuestion] = useState(''); // State to store the question input
   const [answer, setAnswer] = useState(''); // State to store the answer input
+
+  const themeStyles = getThemeStyles(useColorScheme());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,18 +36,29 @@ const ManageCardsScreen = ({ route, navigation }) => {
         // Handle error
       }
     };
-
     fetchData();
-  }, [stackId, cards]);
+  }, [refreshing, stackId, cards]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   const handleCancelModal = () => {
     setIsAddingCard(false); // Hide the modal after adding the card
     setIsEditingCard(false); // Hide the modal after adding the card
+    setIsDeletingCard(false);
     setIsProcessing(false);
     setCardId('');
     setQuestion(''); // Clear the input fields
     setAnswer('');
   }
+
+  const handleAddCard = async () => {
+    setIsAddingCard(true); // Show the modal
+  };
 
   const handleEditCard = (cardId, cardQuestion, cardAnswer) => {
     // Navigate to card editing screen, passing cardId
@@ -49,25 +69,19 @@ const ManageCardsScreen = ({ route, navigation }) => {
   };
 
   const handleDeleteCard = async (cardId) => {
-    try {
-      await deleteCard(stackId, cardId);
-    } catch (error) {
-      console.error('Error deleting card:', error);
-    }
-  };
-
-  const handleAddCard = async () => {
-    setIsAddingCard(true); // Show the modal
+    setIsDeletingCard(true);
+    setCardId(cardId);
   };
 
   const handleSaveCard = async () => {
     setIsProcessing(true);
-    // You can add validation here if needed
-    if (question.trim() === '' || answer.trim() === '') {
-      alert('Please enter both a question and an answer.');
-      return;
-    }
 
+    if (isAddingCard || isEditingCard) {
+      if (question.trim() === '' || answer.trim() === '') {
+        alert('Please enter both a question and an answer.');
+        return;
+      }
+    }
     // Create a new card with the entered question and answer
     const newCardData = {
       question: question,
@@ -79,13 +93,17 @@ const ManageCardsScreen = ({ route, navigation }) => {
         await addCard(stackId, newCardData);
       } else if (isEditingCard) {
         await updateCard(stackId, cardId, newCardData);
+      } else if (isDeletingCard) {
+        await deleteCard(stackId, cardId);
       }
       setIsAddingCard(false); // Hide the modal after adding the card
       setIsEditingCard(false); // Hide the modal after adding the card
+      setIsDeletingCard(false);
       setIsProcessing(false);
       setCardId('');
       setQuestion(''); // Clear the input fields
       setAnswer('');
+      onRefresh();
     } catch (error) {
       console.error('Error adding new card:', error);
     }
@@ -95,32 +113,45 @@ const ManageCardsScreen = ({ route, navigation }) => {
     <View style={themeStyles.container}>
       {cards ? (
         <>
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={themeStyles.primaryButton} onPress={() => navigation.navigate('Stack Details' , {stackId})}>
-            <Text>Stack Details</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={themeStyles.secondaryButton} onPress={handleAddCard}>
-            <Text>Add Card</Text>
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', paddingBottom: 10, marginBottom: 10, borderBottomWidth: 1, borderBottomColor: 'gray' }}>
+            <TouchableOpacity style={[themeStyles.tertiaryButton, { marginHorizontal: 5 }]} onPress={() => navigation.navigate('Stacks')}>
+              <Ionicons name="layers-outline" size={24} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={[themeStyles.primaryButton, { marginHorizontal: 5 }]} onPress={() => navigation.navigate('Stack Details', { stackId, theme })}>
+              <Ionicons name="clipboard-sharp" size={24} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={[themeStyles.secondaryButton, { marginHorizontal: 5 }]} onPress={handleAddCard}>
+              <Ionicons name="add-circle-sharp" size={24} color="white" />
+            </TouchableOpacity>
+            <SettingsModal />
           </View>
 
           <FlatList
             data={cards}
-            keyExtractor={(item) => item.id.toString()}
+            refreshControl={
+              <RefreshControl refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={'gray'}
+                title="Refreshing"
+                titleColor={'gray'}
+              />
+            }
+            keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <View style={styles.cardItem}>
-                <Text style={{ width: '65%' }} numberOfLines={1} ellipsizeMode='tail'>{item.question}</Text>
+              <View style={[themeStyles.card, { flexDirection: 'row', alignContent: 'center', alignItems: 'center', marginVertical: 2 }]}>
+                <Text style={[themeStyles.text, { width: '70%', marginRight: 5 }]} numberOfLines={1} ellipsizeMode='tail'>{item.question}</Text>
+
                 <TouchableOpacity
-                  style={styles.editButton}
+                  style={[themeStyles.primaryButton, { marginHorizontal: 2 }]}
                   onPress={() => handleEditCard(item.id, item.question, item.answer)}
                 >
-                  <Text>Edit</Text>
+                  <Ionicons name="create" size={24} color="white" />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.deleteButton}
+                  style={[themeStyles.dangerButton, { marginHorizontal: 2 }]}
                   onPress={() => handleDeleteCard(item.id)}
                 >
-                  <Text>Delete</Text>
+                  <Ionicons name="close-circle-outline" size={24} color="white" />
                 </TouchableOpacity>
               </View>
             )}
@@ -132,21 +163,21 @@ const ManageCardsScreen = ({ route, navigation }) => {
             animationType="slide"
             transparent={false}
           >
-            <View style={styles.modalView}>
-              {isAddingCard && (<Text style={[styles.modalTitle]}>Add a New Card</Text>)}
-              {isEditingCard && (<Text style={[styles.modalTitle]}>Edit Card</Text>)}
-              <Text style={{ alignSelf: 'flex-start' }}>Question</Text>
+            <View style={themeStyles.modalView}>
+              {isAddingCard && (<Text style={[themeStyles.titleText]}>Add Card</Text>)}
+              {isEditingCard && (<Text style={[themeStyles.titleText]}>Edit Card</Text>)}
+              <Text style={[themeStyles.text, { alignSelf: 'flex-start' }]}>Question</Text>
               <TextInput
-                style={styles.input}
+                style={[themeStyles.input, styles.input]}
                 placeholder="Write your question here"
                 value={question}
                 onChangeText={(text) => setQuestion(text)}
                 multiline={true}
                 numberOfLines={5}
               />
-              <Text style={{ alignSelf: 'flex-start' }}>Answer</Text>
+              <Text style={[themeStyles.text, { alignSelf: 'flex-start' }]}>Answer</Text>
               <TextInput
-                style={styles.input}
+                style={[themeStyles.input, styles.input]}
                 placeholder="Write your answer here"
                 value={answer}
                 onChangeText={(text) => setAnswer(text)}
@@ -155,20 +186,39 @@ const ManageCardsScreen = ({ route, navigation }) => {
               />
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TouchableOpacity
-                  style={isProcessing ? styles.disabledButton : styles.cancelButton}
+                  style={[themeStyles.configButton, { marginHorizontal: 5 }]}
                   onPress={handleCancelModal}
                   disabled={isProcessing}
                 >
-                  <Text style={[styles.buttonText]}>Cancel</Text>
+                  <Ionicons name="return-down-back" size={24} color="white" />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={isProcessing ? styles.disabledButton : styles.saveButton}
+                  style={[themeStyles.successButton, { marginHorizontal: 5 }]}
                   onPress={handleSaveCard}
                   disabled={isProcessing}
                 >
-                  <Text style={[styles.buttonText]}>Save</Text>
+                  <Text style={[themeStyles.buttonText]}>Submit</Text>
                 </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
 
+          {/* Modal for deleting cards */}
+          <Modal
+            visible={isDeletingCard}
+            transparent={false}
+            animationType="slide"
+          >
+            <View style={themeStyles.modalView}>
+              <Text style={[themeStyles.titleText, { marginVertical: 10 }]}>Delete Card</Text>
+              <Text style={themeStyles.text}>Are you sure you want to delete this card?</Text>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <TouchableOpacity onPress={handleCancelModal} style={[themeStyles.configButton, { marginHorizontal: 5 }]}>
+                  <Ionicons name="return-down-back" size={24} color="white" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleSaveCard} style={[themeStyles.dangerButton, { marginHorizontal: 5 }]}>
+                  <Text style={themeStyles.buttonText}>Delete</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </Modal>
@@ -181,55 +231,9 @@ const ManageCardsScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  cardItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  editButton: {
-    marginLeft: 'auto',
-    marginRight: 10,
-    padding: 5,
-    backgroundColor: 'lightblue',
-    borderRadius: 5
-  },
-  deleteButton: {
-    padding: 5,
-    backgroundColor: 'lightcoral',
-    borderRadius: 5
-  },
-  addButton: {
-    alignSelf: 'flex-end',
-    margin: 10,
-    padding: 10,
-    backgroundColor: 'lightgreen',
-    borderRadius: 5
-  },
-  modalView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    margin: 20,
-    borderRadius: 10,
-    padding: 20,
-  },
-  modalTitle: {
-    fontSize: 20,
-    margin: 10,
-    fontWeight: 'bold'
-  },
   input: {
     width: '100%',
     height: 200,
-    borderWidth: 1,
-    borderColor: 'gray',
-    backgroundColor: 'white',
-    borderRadius: 5,
     paddingHorizontal: 10,
     marginVertical: 10,
   },
@@ -238,24 +242,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     margin: 10,
-  },
-  saveButton: {
-    backgroundColor: 'green',
-    padding: 10,
-    borderRadius: 5,
-    margin: 10,
-  },
-  cancelButton: {
-    backgroundColor: 'red',
-    padding: 10,
-    borderRadius: 5,
-    margin: 10
-  },
-  buttonText: {
-    fontSize: 18,
-    color: 'white',
-    textAlign: 'center',
-    fontWeight: 'bold',
   },
 });
 
