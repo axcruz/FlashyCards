@@ -13,12 +13,13 @@ const StackModal = (props) => {
     
     const modalMode = props.mode;
     const stackId = props.stackId;
+    const stackData = props.stackData;
     const themeStyles = getThemeStyles(useColorScheme());
 
     const toggleStackModal = () => {
         setModalVisible(!modalVisible);
-        setStackName('');
-        setCategory('');
+            setStackName('');
+            setCategory('');
     }
 
     const handleRefresh = () => {

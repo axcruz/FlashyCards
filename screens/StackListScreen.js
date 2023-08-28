@@ -1,12 +1,15 @@
-// StackListScreen.js
+// screens/StackListScreen.js
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, FlatList, RefreshControl, ActivityIndicator, useColorScheme } from 'react-native';
-import getAllStacks from '../utils/getAllStacks';
+
 import { auth } from '../firebase/config';
 
 import LoadingIndicator from '../components/LoadingIndicator';
 import StackModal from '../components/StackModal';
 import SettingsModal from '../components/SettingsModal';
+
+import { getAllStacks } from '../utils';
 
 import { getThemeStyles } from '../styles/theme';
 

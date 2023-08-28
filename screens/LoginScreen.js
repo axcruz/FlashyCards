@@ -1,17 +1,19 @@
-// LoginScreen.js
-import React, { useState } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View, StyleSheet, useColorScheme } from 'react-native'
+// screens/LoginScreen.js
+
+import React, { useState } from 'react';
+import { Image, Text, TextInput, TouchableOpacity, View, StyleSheet, useColorScheme } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 import { auth } from '../firebase/config';
 
 import { getThemeStyles } from '../styles/theme';
 
-const LoginScreen = ({navigation }) => {
+const LoginScreen = ({ navigation }) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const themeStyles = useState(getThemeStyles(useColorScheme()));
+    const themeStyles = getThemeStyles(useColorScheme());
 
     const onFooterLinkPress = () => {
         navigation.navigate('Registration');

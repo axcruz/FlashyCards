@@ -1,21 +1,24 @@
-// StackDetailScreen.js
+// screens/StackDetailScreen.js
+
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Switch, Modal, useColorScheme } from 'react-native';
-import getStack from '../utils/getStack';
-import deleteStack from '../utils/deleteStack';
-import { getThemeStyles } from '../styles/theme';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Switch, Modal, useColorScheme } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
+import LoadingIndicator from '../components/LoadingIndicator';
 import StackModal from '../components/StackModal';
 import SettingsModal from '../components/SettingsModal';
 
-import Ionicons from '@expo/vector-icons/Ionicons';
-import LoadingIndicator from '../components/LoadingIndicator';
+import { getStack, deleteStack } from '../utils';
+
+import { getThemeStyles } from '../styles/theme';
+
 
 const StackDetailScreen = ({ route, navigation }) => {
  
   const { stackId } = route.params;
 
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [timePerCardInSeconds, setTimePerCardInSeconds] = useState('60');
   const [randomOrder, setRandomOrder] = useState(false);
   const [untimed, setUntimed] = useState(false);
@@ -41,8 +44,8 @@ const StackDetailScreen = ({ route, navigation }) => {
       }
     };
     fetchData();
-    setIsRefreshing(false);
-  }, [stackId, isRefreshing]);
+    setRefreshing(false);
+  }, [stackId, refreshing]);
 
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -78,7 +81,7 @@ const StackDetailScreen = ({ route, navigation }) => {
   };
 
   const toggleDeleteModal = () => {
-    setIsDeleteModalVisible(!isDeleteModalVisible);
+    setDeleteModalVisible(!deleteModalVisible);
   };
 
   const handleDeleteStack = async () => {
@@ -93,13 +96,12 @@ const StackDetailScreen = ({ route, navigation }) => {
   return (
     <>
       {stack ?
-
         <View style={themeStyles.container}>
           <View style={{ flexDirection: 'row', paddingBottom: 10, marginBottom: 10, borderBottomWidth: 1, borderBottomColor: 'gray' }}>
             <TouchableOpacity style={[themeStyles.primaryButton, { marginHorizontal: 5 }]} onPress={() => navigation.navigate('Stacks')}>
               <Ionicons name="layers-outline" size={24} color="white" />
             </TouchableOpacity>
-            <StackModal mode={'update'} stackId={stackId}/>
+            <StackModal mode={'update'} stackId={stackId} stackData={stack}/>
             <TouchableOpacity style={[themeStyles.secondaryButton, { marginHorizontal: 5 }]} onPress={handleManageFlashCards}>
               <Ionicons name="grid-outline" size={24} color="white" />
             </TouchableOpacity>
@@ -124,13 +126,8 @@ const StackDetailScreen = ({ route, navigation }) => {
               <TextInput
                 style={[
                   themeStyles.input,
-                  {
-                    width: 50,
-                    height: 30,
-                    padding: 5,
-                    margin: 5
-                  },
-                  untimed ? styles.disabledInput : null, // Apply disabled style if untimed is true
+                  { width: 50, height: 30, padding: 5, margin: 5 },
+                  untimed ? styles.disabledInput : null,
                 ]}
                 value={timePerCardInSeconds}
                 onChangeText={setTimePerCardInSeconds}
@@ -151,9 +148,8 @@ const StackDetailScreen = ({ route, navigation }) => {
           <TouchableOpacity style={themeStyles.infoButton} onPress={handleStartFlashcards}>
             <Ionicons name="play" size={30} color="white" />
           </TouchableOpacity>
-
           <Modal
-            visible={isDeleteModalVisible}
+            visible={deleteModalVisible}
             transparent={false}
             animationType="slide"
           >

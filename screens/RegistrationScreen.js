@@ -1,14 +1,18 @@
-// RegistrationScreen.js
+// screens/RegistrationScreen.js
+
 import React, { useState } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View, StyleSheet, ActivityIndicator, useColorScheme } from 'react-native'
+import { Image, Text, TextInput, TouchableOpacity, View, StyleSheet, useColorScheme } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { db, auth } from '../firebase/config';
 
+import LoadingIndicator from '../components/LoadingIndicator';
+
 import { getThemeStyles } from '../styles/theme';
 
-export default function RegistrationScreen({navigation}) {
 
-    const [isLoading, setIsLoading] = useState(false);
+const RegistrationScreen = ({ navigation }) => {
+
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -16,18 +20,18 @@ export default function RegistrationScreen({navigation}) {
     const themeStyles = getThemeStyles(useColorScheme());
 
     const onFooterLinkPress = () => {
-        navigation.navigate('Log in')
+        navigation.navigate('Log in');
     }
 
     const onRegisterPress = () => {
-        setIsLoading(true);
+        setLoading(true);
         if (password !== confirmPassword) {
             alert("Passwords don't match.");
             return;
         }
-            auth.createUserWithEmailAndPassword(email, password)
+        auth.createUserWithEmailAndPassword(email, password)
             .then((response) => {
-                if(response.user) {
+                if (response.user) {
                     const prefsRef = db.collection('prefs');
                     prefsRef.add({
                         uid: response.user.uid,
@@ -38,70 +42,61 @@ export default function RegistrationScreen({navigation}) {
                 } else {
                     alert('Unable to register user. Please try again later.');
                 }
- 
             }).catch((error) => {
                 alert(error);
             });
-        setIsLoading(false);
+        setLoading(false);
     }
 
     return (
         <View style={themeStyles.container}>
-            {isLoading ? (
-<ActivityIndicator size="large"/>
+            {loading ? (
+                <LoadingIndicator />
             ) : (
-
                 <KeyboardAwareScrollView
-                style={{ flex: 1, width: '100%' }}
-                keyboardShouldPersistTaps="always">
-                <Image
-                    style={styles.logo}
-                    source={require('../assets/icon.png')}
-                />
-                <TextInput
-                    style={[themeStyles.input, styles.input]}
-                    placeholder='E-mail'
-                    placeholderTextColor="#aaaaaa"
-                    onChangeText={(text) => setEmail(text)}
-                    value={email}
-                    underlineColorAndroid="transparent"
-                    autoCapitalize="none"
-                />
-                <TextInput
-                    style={[themeStyles.input, styles.input]}
-                    placeholderTextColor="#aaaaaa"
-                    secureTextEntry
-                    placeholder='Password'
-                    onChangeText={(text) => setPassword(text)}
-                    value={password}
-                    autoCapitalize="none"
-                />
-                <TextInput
-                    style={[themeStyles.input, styles.input]}
-                    placeholderTextColor="#aaaaaa"
-                    secureTextEntry
-                    placeholder='Confirm Password'
-                    onChangeText={(text) => setConfirmPassword(text)}
-                    value={confirmPassword}
-                    autoCapitalize="none"
-                />
-                <TouchableOpacity
-                                        style={[themeStyles.primaryButton, {
-                                            marginLeft: 30,
-                                            marginRight: 30,
-                                            marginTop: 20,
-                                            height: 48
-                                        }]}
-                    onPress={() => onRegisterPress()}>
-                    <Text style={themeStyles.buttonText}>Register</Text>
-                </TouchableOpacity>
-                <View style={styles.footerView}>
-                    <Text style={styles.footerText}>Already have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>
-                </View>
-            </KeyboardAwareScrollView>
-
-            ) }
-
+                    style={{ flex: 1, width: '100%' }}
+                    keyboardShouldPersistTaps="always">
+                    <Image
+                        style={styles.logo}
+                        source={require('../assets/icon.png')}
+                    />
+                    <TextInput
+                        style={[themeStyles.input, styles.input]}
+                        placeholder='E-mail'
+                        placeholderTextColor="#aaaaaa"
+                        onChangeText={(text) => setEmail(text)}
+                        value={email}
+                        underlineColorAndroid="transparent"
+                        autoCapitalize="none"
+                    />
+                    <TextInput
+                        style={[themeStyles.input, styles.input]}
+                        placeholderTextColor="#aaaaaa"
+                        secureTextEntry
+                        placeholder='Password'
+                        onChangeText={(text) => setPassword(text)}
+                        value={password}
+                        autoCapitalize="none"
+                    />
+                    <TextInput
+                        style={[themeStyles.input, styles.input]}
+                        placeholderTextColor="#aaaaaa"
+                        secureTextEntry
+                        placeholder='Confirm Password'
+                        onChangeText={(text) => setConfirmPassword(text)}
+                        value={confirmPassword}
+                        autoCapitalize="none"
+                    />
+                    <TouchableOpacity
+                        style={[themeStyles.primaryButton, { marginLeft: 30, marginRight: 30, marginTop: 20, height: 48 }]}
+                        onPress={() => onRegisterPress()}>
+                        <Text style={themeStyles.buttonText}>Register</Text>
+                    </TouchableOpacity>
+                    <View style={styles.footerView}>
+                        <Text style={styles.footerText}>Already have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>
+                    </View>
+                </KeyboardAwareScrollView>
+            )}
         </View>
     )
 };
@@ -139,3 +134,5 @@ const styles = StyleSheet.create({
         fontSize: 16
     }
 });
+
+export default RegistrationScreen;

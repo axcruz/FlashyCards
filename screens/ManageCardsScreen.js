@@ -1,29 +1,29 @@
+// screens/ManageCardsScreen.js
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator, TextInput, Modal, RefreshControl, useColorScheme } from 'react-native';
-import getStack from '../utils/getStack';
-import addCard from '../utils/addCard';
-import updateCard from '../utils/updateCard';
-import deleteCard from '../utils/deleteCard';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 import SettingsModal from '../components/SettingsModal';
-import Ionicons from '@expo/vector-icons/Ionicons';
+
+import { getStack, addCard, updateCard, deleteCard } from '../utils';
 
 import { getThemeStyles } from '../styles/theme';
 
 
 const ManageCardsScreen = ({ route, navigation }) => {
-  
-  const { stackId} = route.params;
-  
+
+  const { stackId } = route.params;
+
   const [refreshing, setRefreshing] = useState(false);
   const [cards, setCards] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isAddingCard, setIsAddingCard] = useState(false); // State to control the modal
-  const [isEditingCard, setIsEditingCard] = useState(false); // State to control the modal
+  const [isAddingCard, setIsAddingCard] = useState(false);
+  const [isEditingCard, setIsEditingCard] = useState(false);
   const [isDeletingCard, setIsDeletingCard] = useState(false);
   const [cardId, setCardId] = useState('');
-  const [question, setQuestion] = useState(''); // State to store the question input
-  const [answer, setAnswer] = useState(''); // State to store the answer input
+  const [question, setQuestion] = useState(''); // Store the question input
+  const [answer, setAnswer] = useState(''); // Store the answer input
 
   const themeStyles = getThemeStyles(useColorScheme());
 
@@ -33,7 +33,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
         const result = await getStack(stackId);
         setCards(result.cardsData);
       } catch (error) {
-        // Handle error
+        alert('An unexpected issue occured. Unable to retrieve card data.')
       }
     };
     fetchData();
@@ -48,11 +48,12 @@ const ManageCardsScreen = ({ route, navigation }) => {
 
   const handleCancelModal = () => {
     setIsAddingCard(false); // Hide the modal after adding the card
-    setIsEditingCard(false); // Hide the modal after adding the card
-    setIsDeletingCard(false);
+    setIsEditingCard(false); // Hide the modal after editing the card
+    setIsDeletingCard(false); // Hide the modal after deleting the card
     setIsProcessing(false);
+    // Clear the input fields
     setCardId('');
-    setQuestion(''); // Clear the input fields
+    setQuestion('');
     setAnswer('');
   }
 
@@ -75,14 +76,14 @@ const ManageCardsScreen = ({ route, navigation }) => {
 
   const handleSaveCard = async () => {
     setIsProcessing(true);
-
+    // Validate card data on form
     if (isAddingCard || isEditingCard) {
       if (question.trim() === '' || answer.trim() === '') {
         alert('Please enter both a question and an answer.');
         return;
       }
     }
-    // Create a new card with the entered question and answer
+    // Create a new card object with the entered question and answer
     const newCardData = {
       question: question,
       answer: answer,
@@ -96,8 +97,8 @@ const ManageCardsScreen = ({ route, navigation }) => {
       } else if (isDeletingCard) {
         await deleteCard(stackId, cardId);
       }
-      setIsAddingCard(false); // Hide the modal after adding the card
-      setIsEditingCard(false); // Hide the modal after adding the card
+      setIsAddingCard(false);
+      setIsEditingCard(false);
       setIsDeletingCard(false);
       setIsProcessing(false);
       setCardId('');
@@ -105,7 +106,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
       setAnswer('');
       onRefresh();
     } catch (error) {
-      console.error('Error adding new card:', error);
+      alert('An unexpected error occured. Unable to save data for cards.')
     }
   };
 
@@ -117,7 +118,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
             <TouchableOpacity style={[themeStyles.tertiaryButton, { marginHorizontal: 5 }]} onPress={() => navigation.navigate('Stacks')}>
               <Ionicons name="layers-outline" size={24} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity style={[themeStyles.primaryButton, { marginHorizontal: 5 }]} onPress={() => navigation.navigate('Stack Details', { stackId, theme })}>
+            <TouchableOpacity style={[themeStyles.primaryButton, { marginHorizontal: 5 }]} onPress={() => navigation.navigate('Stack Details', { stackId })}>
               <Ionicons name="clipboard-sharp" size={24} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={[themeStyles.secondaryButton, { marginHorizontal: 5 }]} onPress={handleAddCard}>
@@ -125,7 +126,6 @@ const ManageCardsScreen = ({ route, navigation }) => {
             </TouchableOpacity>
             <SettingsModal />
           </View>
-
           <FlatList
             data={cards}
             refreshControl={
