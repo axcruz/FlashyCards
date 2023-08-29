@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, TouchableOpacity, Modal, Text, ActivityIndicator, Switch, useColorScheme } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { auth } from '../firebase/config';
-
 import { getThemeStyles } from '../styles/theme';
 
 const SettingsModal = (props) => {

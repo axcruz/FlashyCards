@@ -1,6 +1,8 @@
+// styles/theme.js
+
 import { StyleSheet } from 'react-native';
 
-// Define a color palette with named colors
+// Color palette with named colors
 const colors = {
   primary: '#007AFF',
   secondary: '#4CAF50',
@@ -20,7 +22,7 @@ const colors = {
   textNeutral: '#888888'
 };
 
-// Define a font palette with named font sizes
+// Font palette with named font sizes
 const fonts = {
   xSmall: 14,
   small: 16,
@@ -90,7 +92,7 @@ const defaultStyles = {
   }
 };
 
-// Define your themes with their respective style variations
+// Define themes with their respective style variations
 const themes = {
 
   light: {
@@ -209,7 +211,7 @@ const themes = {
   },
 };
 
-// Define a function to switch between themes
+// Function to switch between themes
 const getThemeStyles = (theme) => {
   return StyleSheet.create(themes[theme]);
 };

@@ -14,7 +14,7 @@ import { getThemeStyles } from '../styles/theme';
 
 
 const StackDetailScreen = ({ route, navigation }) => {
- 
+
   const { stackId } = route.params;
 
   const [refreshing, setRefreshing] = useState(false);
@@ -101,7 +101,7 @@ const StackDetailScreen = ({ route, navigation }) => {
             <TouchableOpacity style={[themeStyles.primaryButton, { marginHorizontal: 5 }]} onPress={() => navigation.navigate('Stacks')}>
               <Ionicons name="layers-outline" size={24} color="white" />
             </TouchableOpacity>
-            <StackModal mode={'update'} stackId={stackId} stackData={stack}/>
+            <StackModal mode={'update'} stackId={stackId} />
             <TouchableOpacity style={[themeStyles.secondaryButton, { marginHorizontal: 5 }]} onPress={handleManageFlashCards}>
               <Ionicons name="grid-outline" size={24} color="white" />
             </TouchableOpacity>
@@ -110,9 +110,11 @@ const StackDetailScreen = ({ route, navigation }) => {
             </TouchableOpacity>
             <SettingsModal />
           </View>
+           <View style={{margin: 5}}>
           <Text style={[themeStyles.titleText, { marginLeft: 5, marginVertical: 5 }]}>{stack.stackName}</Text>
           <Text style={[themeStyles.subText, { marginLeft: 15, marginVertical: 5 }]}>{stack.category}</Text>
-          <View style={{ marginHorizontal: 10, marginVertical: 15 }}>
+          </View>
+          <View style={[themeStyles.card, { marginHorizontal: 10, marginVertical: 15 }]}>
             <View style={styles.option}>
               <Text style={themeStyles.subText}>Untimed</Text>
               <Switch

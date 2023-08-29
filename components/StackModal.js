@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity, Modal, Text, TextInput, useColorScheme } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import addStack from '../utils/addStack';
 import updateStack from '../utils/updateStack';
 import { getThemeStyles } from '../styles/theme';
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 const StackModal = (props) => {
 
@@ -13,7 +13,6 @@ const StackModal = (props) => {
     
     const modalMode = props.mode;
     const stackId = props.stackId;
-    const stackData = props.stackData;
     const themeStyles = getThemeStyles(useColorScheme());
 
     const toggleStackModal = () => {

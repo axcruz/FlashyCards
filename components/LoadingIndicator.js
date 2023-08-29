@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet, useColorScheme } from 'react-native';
-
 import { getThemeStyles } from '../styles/theme';
 
 const LoadingIndicator = () => {

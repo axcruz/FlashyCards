@@ -16,6 +16,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
   const { stackId } = route.params;
 
   const [refreshing, setRefreshing] = useState(false);
+  const [stack, setStack] = useState([]);
   const [cards, setCards] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAddingCard, setIsAddingCard] = useState(false);
@@ -31,6 +32,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
     const fetchData = async () => {
       try {
         const result = await getStack(stackId);
+        setStack(result.stackData);
         setCards(result.cardsData);
       } catch (error) {
         alert('An unexpected issue occured. Unable to retrieve card data.')
@@ -125,6 +127,10 @@ const ManageCardsScreen = ({ route, navigation }) => {
               <Ionicons name="add-circle-sharp" size={24} color="white" />
             </TouchableOpacity>
             <SettingsModal />
+          </View>
+          <View style={{margin: 5}}>
+          <Text style={[themeStyles.titleText, { marginLeft: 5, marginVertical: 5 }]}>{stack.stackName}</Text>
+          <Text style={[themeStyles.subText, { marginLeft: 15, marginVertical: 5 }]}>{stack.category}</Text>
           </View>
           <FlatList
             data={cards}
