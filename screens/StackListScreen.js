@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, FlatList, RefreshControl, ActivityIndicator, useColorScheme } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { auth } from '../firebase/config';
 
@@ -74,7 +75,9 @@ const StackListScreen = ({ route, navigation }) => {
               }]}
               onPress={() => toggleCategory(item.title)}
             >
-              <Text style={[themeStyles.titleText, { width: '90%' }]}
+              {isExpanded ? (<Ionicons name="folder-open" size={24} style={themeStyles.text}/>) : (<Ionicons name="folder" size={24} style={themeStyles.text}/>)}
+     
+              <Text style={[themeStyles.titleText, { width: '80%', }]}
                 numberOfLines={1} ellipsizeMode='tail'
               >{item.title}</Text>
               <Text style={[themeStyles.text]}>{isExpanded ? '▼' : '▶'}</Text>

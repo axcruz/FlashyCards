@@ -7,18 +7,19 @@ import { getThemeStyles } from '../styles/theme';
 
 const StackModal = (props) => {
 
-    const [modalVisible, setModalVisible] = useState(false);
-    const [stackName, setStackName] = useState('');
-    const [category, setCategory] = useState('');
-    
     const modalMode = props.mode;
     const stackId = props.stackId;
+    const stackData = props.stackData;
     const themeStyles = getThemeStyles(useColorScheme());
+    
+    const [modalVisible, setModalVisible] = useState(false);
+    const [stackName, setStackName] = useState(stackData?.stackName);
+    const [category, setCategory] = useState(stackData?.category);
 
     const toggleStackModal = () => {
         setModalVisible(!modalVisible);
-            setStackName('');
-            setCategory('');
+        setStackName('');
+        setCategory('');
     }
 
     const handleRefresh = () => {

@@ -55,6 +55,10 @@ const StackDetailScreen = ({ route, navigation }) => {
     return array;
   }
 
+  const triggerRefresh = () =>{
+    setRefreshing(true);
+  }
+
   const toggleUntimed = () => {
     setUntimed(!untimed);
   };
@@ -101,7 +105,7 @@ const StackDetailScreen = ({ route, navigation }) => {
             <TouchableOpacity style={[themeStyles.primaryButton, { marginHorizontal: 5 }]} onPress={() => navigation.navigate('Stacks')}>
               <Ionicons name="layers-outline" size={24} color="white" />
             </TouchableOpacity>
-            <StackModal mode={'update'} stackId={stackId} />
+            <StackModal mode={'update'} stackId={stackId} stackData={stack} />
             <TouchableOpacity style={[themeStyles.secondaryButton, { marginHorizontal: 5 }]} onPress={handleManageFlashCards}>
               <Ionicons name="grid-outline" size={24} color="white" />
             </TouchableOpacity>
