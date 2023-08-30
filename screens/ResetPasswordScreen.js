@@ -1,4 +1,4 @@
-// screens/LoginScreen.js
+// screens/ResetPasswordScreen.js
 
 import React, { useState } from 'react';
 import { Image, Text, TextInput, TouchableOpacity, View, StyleSheet, useColorScheme } from 'react-native';
@@ -8,27 +8,24 @@ import { auth } from '../firebase/config';
 
 import { getThemeStyles } from '../styles/theme';
 
-const LoginScreen = ({ navigation }) => {
+const ResetPasswordScreen = ({ navigation }) => {
 
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
 
     const themeStyles = getThemeStyles(useColorScheme());
 
     const onFooterLinkPress = () => {
-        navigation.navigate('Registration');
-    }
-
-    const onLoginPress = () => {
-        auth.signInWithEmailAndPassword(email, password)
-            .then()
-            .catch(error => {
-                alert(error);
-            });
+        navigation.navigate('Log in');
     }
 
     const onResetPress = () => {
-        navigation.navigate('Reset Password');
+        auth.sendPasswordResetEmail(email)
+            .then(() => {
+                alert('A password reset email has been sent!');
+            })
+            .catch(error => {
+                alert(error);
+            });
     }
 
     return (
@@ -50,24 +47,13 @@ const LoginScreen = ({ navigation }) => {
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
-                <TextInput
-                    style={[themeStyles.input, styles.input]}
-                    placeholderTextColor="#aaaaaa"
-                    secureTextEntry
-                    placeholder='Password'
-                    onChangeText={(text) => setPassword(text)}
-                    value={password}
-                    underlineColorAndroid="transparent"
-                    autoCapitalize="none"
-                />
-                <Text onPress={onResetPress} style={[styles.footerLink, {fontSize: 12, marginLeft: 35}]}>Forgot password?</Text>
                 <TouchableOpacity
                     style={[themeStyles.primaryButton, {marginLeft: 30, marginRight: 30, marginTop: 30, height: 48}]}
-                    onPress={() => onLoginPress()}>
-                    <Text style={themeStyles.buttonText}>Log in</Text>
+                    onPress={() => onResetPress()}>
+                    <Text style={themeStyles.buttonText}>Reset password</Text>
                 </TouchableOpacity>
                 <View style={styles.footerView}>
-                    <Text style={styles.subText}>Don't have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Sign up</Text></Text>
+                    <Text style={styles.subText}>Already reset? Back to <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>
                 </View>
             </KeyboardAwareScrollView>
         </View>
@@ -108,4 +94,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default LoginScreen;
+export default ResetPasswordScreen;

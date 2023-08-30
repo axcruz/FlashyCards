@@ -10,12 +10,14 @@ import { decode, encode } from 'base-64';
 if (!global.btoa) { global.btoa = encode }
 if (!global.atob) { global.atob = decode }
 
-import CardScreen from './screens/CardScreen';
-import StackListScreen from './screens/StackListScreen';
-import StackDetailScreen from './screens/StackDetailScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
+import ResetPasswordScreen from './screens/ResetPasswordScreen';
+
+import StackListScreen from './screens/StackListScreen';
+import StackDetailScreen from './screens/StackDetailScreen';
 import ManageCardsScreen from './screens/ManageCardsScreen';
+import CardScreen from './screens/CardScreen';
 
 import { auth } from './firebase/config';
 
@@ -53,6 +55,7 @@ const App = () => {
           <Stack.Navigator>
             <Stack.Screen name="Log in" component={LoginScreen} />
             <Stack.Screen name="Registration" component={RegistrationScreen} />
+            <Stack.Screen name="Reset Password" component={ResetPasswordScreen} />
           </Stack.Navigator>
         )
         }

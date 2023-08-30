@@ -88,7 +88,7 @@ const RegistrationScreen = ({ navigation }) => {
                         autoCapitalize="none"
                     />
                     <TouchableOpacity
-                        style={[themeStyles.primaryButton, { marginLeft: 30, marginRight: 30, marginTop: 20, height: 48 }]}
+                        style={[themeStyles.primaryButton, { marginLeft: 30, marginRight: 30, marginTop: 30, height: 48 }]}
                         onPress={() => onRegisterPress()}>
                         <Text style={themeStyles.buttonText}>Register</Text>
                     </TouchableOpacity>
