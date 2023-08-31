@@ -28,6 +28,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
   const [stack, setStack] = useState([]);
   const [cards, setCards] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isViewingCard, setIsViewingCard] = useState(false);
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [isEditingCard, setIsEditingCard] = useState(false);
   const [isDeletingCard, setIsDeletingCard] = useState(false);
@@ -59,6 +60,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
   }, []);
 
   const handleCancelModal = () => {
+    setIsViewingCard(false); // Hide the add modal after adding the card
     setIsAddingCard(false); // Hide the add modal after adding the card
     setIsEditingCard(false); // Hide the edit modal after editing the card
     setIsDeletingCard(false); // Hide the delete modal after deleting the card
@@ -71,6 +73,14 @@ const ManageCardsScreen = ({ route, navigation }) => {
 
   const handleAddCard = async () => {
     setIsAddingCard(true); // Show the modal
+  };
+
+  const handleViewCard = (cardId, cardQuestion, cardAnswer) => {
+    // Navigate to card editing screen, passing cardId
+    setIsViewingCard(true);
+    setCardId(cardId);
+    setQuestion(cardQuestion);
+    setAnswer(cardAnswer);
   };
 
   const handleEditCard = (cardId, cardQuestion, cardAnswer) => {
@@ -188,6 +198,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
             }
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handleViewCard(item.id, item.question, item.answer)}>
               <View
                 style={[
                   themeStyles.card,
@@ -195,43 +206,49 @@ const ManageCardsScreen = ({ route, navigation }) => {
                     flexDirection: "row",
                     alignContent: "center",
                     alignItems: "center",
-                    marginVertical: 2,
+                    justifyContent: "space-between",
+                    marginVertical: 5,
                   },
                 ]}
               >
+
                 <Text
-                  style={[themeStyles.text, { width: "70%", marginRight: 5 }]}
+                  style={[themeStyles.text, { marginRight: 5 }]}
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
                   {item.question}
                 </Text>
+    
 
-                <TouchableOpacity
-                  style={[themeStyles.primaryButton, { marginHorizontal: 2 }]}
-                  onPress={() =>
-                    handleEditCard(item.id, item.question, item.answer)
-                  }
-                >
-                  <Ionicons name="create" size={24} color="white" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[themeStyles.dangerButton, { marginHorizontal: 2 }]}
-                  onPress={() => handleDeleteCard(item.id)}
-                >
-                  <Ionicons
-                    name="close-circle-outline"
-                    size={24}
-                    color="white"
-                  />
-                </TouchableOpacity>
+                <View style={{ flexDirection: "row", alignSelf: "flex-end" }}>
+                  <TouchableOpacity
+                    style={[themeStyles.primaryButton, { marginHorizontal: 5 }]}
+                    onPress={() =>
+                      handleEditCard(item.id, item.question, item.answer)
+                    }
+                  >
+                    <Ionicons name="create" size={24} color="white" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[themeStyles.dangerButton, { marginHorizontal: 5 }]}
+                    onPress={() => handleDeleteCard(item.id)}
+                  >
+                    <Ionicons
+                      name="close-circle-outline"
+                      size={24}
+                      color="white"
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
+              </TouchableOpacity>
             )}
           />
 
-          {/* Modal for adding cards */}
+          {/* Modal for adding/editing cards */}
           <Modal
-            visible={isAddingCard || isEditingCard}
+            visible={isViewingCard || isAddingCard || isEditingCard}
             animationType="slide"
             transparent={false}
           >
@@ -252,6 +269,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
                 onChangeText={(text) => setQuestion(text)}
                 multiline={true}
                 numberOfLines={5}
+                readOnly={isViewingCard}
               />
               <Text style={[themeStyles.text, { alignSelf: "flex-start" }]}>
                 Answer
@@ -263,6 +281,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
                 onChangeText={(text) => setAnswer(text)}
                 multiline={true}
                 numberOfLines={5}
+                readOnly={isViewingCard}
               />
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <TouchableOpacity
@@ -272,6 +291,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
                 >
                   <Ionicons name="return-down-back" size={24} color="white" />
                 </TouchableOpacity>
+                { !isViewingCard && (
                 <TouchableOpacity
                   style={[themeStyles.successButton, { marginHorizontal: 5 }]}
                   onPress={handleSaveCard}
@@ -279,6 +299,8 @@ const ManageCardsScreen = ({ route, navigation }) => {
                 >
                   <Text style={[themeStyles.buttonText]}>Submit</Text>
                 </TouchableOpacity>
+                )
+}
               </View>
             </View>
           </Modal>
