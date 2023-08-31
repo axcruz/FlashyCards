@@ -1,18 +1,27 @@
 // screens/ManageCardsScreen.js
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, ActivityIndicator, TextInput, Modal, RefreshControl, useColorScheme } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  StyleSheet,
+  ActivityIndicator,
+  TextInput,
+  Modal,
+  RefreshControl,
+  useColorScheme,
+} from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-import SettingsModal from '../components/SettingsModal';
+import SettingsModal from "../components/SettingsModal";
 
-import { getStack, addCard, updateCard, deleteCard } from '../utils';
+import { getStack, addCard, updateCard, deleteCard } from "../utils";
 
-import { getThemeStyles } from '../styles/theme';
-
+import { getThemeStyles } from "../styles/theme";
 
 const ManageCardsScreen = ({ route, navigation }) => {
-
   const { stackId } = route.params;
 
   const [refreshing, setRefreshing] = useState(false);
@@ -22,9 +31,9 @@ const ManageCardsScreen = ({ route, navigation }) => {
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [isEditingCard, setIsEditingCard] = useState(false);
   const [isDeletingCard, setIsDeletingCard] = useState(false);
-  const [cardId, setCardId] = useState('');
-  const [question, setQuestion] = useState(''); // Store the question input
-  const [answer, setAnswer] = useState(''); // Store the answer input
+  const [cardId, setCardId] = useState("");
+  const [question, setQuestion] = useState(""); // Store the question input
+  const [answer, setAnswer] = useState(""); // Store the answer input
 
   const themeStyles = getThemeStyles(useColorScheme());
 
@@ -35,29 +44,30 @@ const ManageCardsScreen = ({ route, navigation }) => {
         setStack(result.stackData);
         setCards(result.cardsData);
       } catch (error) {
-        alert('An unexpected issue occured. Unable to retrieve card data.')
+        alert("An unexpected issue occured. Unable to retrieve card data.");
       }
     };
     fetchData();
   }, [refreshing, stackId, cards]);
 
+  // Handle refresh on FlatList
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-    }, 2000);
+    }, 2000); // 2 seconds
   }, []);
 
   const handleCancelModal = () => {
-    setIsAddingCard(false); // Hide the modal after adding the card
-    setIsEditingCard(false); // Hide the modal after editing the card
-    setIsDeletingCard(false); // Hide the modal after deleting the card
+    setIsAddingCard(false); // Hide the add modal after adding the card
+    setIsEditingCard(false); // Hide the edit modal after editing the card
+    setIsDeletingCard(false); // Hide the delete modal after deleting the card
     setIsProcessing(false);
     // Clear the input fields
-    setCardId('');
-    setQuestion('');
-    setAnswer('');
-  }
+    setCardId("");
+    setQuestion("");
+    setAnswer("");
+  };
 
   const handleAddCard = async () => {
     setIsAddingCard(true); // Show the modal
@@ -80,8 +90,8 @@ const ManageCardsScreen = ({ route, navigation }) => {
     setIsProcessing(true);
     // Validate card data on form
     if (isAddingCard || isEditingCard) {
-      if (question.trim() === '' || answer.trim() === '') {
-        alert('Please enter both a question and an answer.');
+      if (question.trim() === "" || answer.trim() === "") {
+        alert("Please enter both a question and an answer.");
         return;
       }
     }
@@ -99,16 +109,18 @@ const ManageCardsScreen = ({ route, navigation }) => {
       } else if (isDeletingCard) {
         await deleteCard(stackId, cardId);
       }
+      // Reset modal controls
       setIsAddingCard(false);
       setIsEditingCard(false);
       setIsDeletingCard(false);
       setIsProcessing(false);
-      setCardId('');
-      setQuestion(''); // Clear the input fields
-      setAnswer('');
+      // Clear the input fields
+      setCardId("");
+      setQuestion("");
+      setAnswer("");
       onRefresh();
     } catch (error) {
-      alert('An unexpected error occured. Unable to save data for cards.')
+      alert("An unexpected error occured. Unable to save data for cards.");
     }
   };
 
@@ -116,40 +128,90 @@ const ManageCardsScreen = ({ route, navigation }) => {
     <View style={themeStyles.container}>
       {cards ? (
         <>
-          <View style={{ flexDirection: 'row', paddingBottom: 10, marginBottom: 10, borderBottomWidth: 1, borderBottomColor: 'gray' }}>
-            <TouchableOpacity style={[themeStyles.tertiaryButton, { marginHorizontal: 5 }]} onPress={() => navigation.navigate('Stacks')}>
+          <View
+            style={{
+              flexDirection: "row",
+              paddingBottom: 10,
+              marginBottom: 10,
+              borderBottomWidth: 1,
+              borderBottomColor: "gray",
+            }}
+          >
+            <TouchableOpacity
+              style={[themeStyles.tertiaryButton, { marginHorizontal: 5 }]}
+              onPress={() => navigation.navigate("Stacks")}
+            >
               <Ionicons name="layers-outline" size={24} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity style={[themeStyles.primaryButton, { marginHorizontal: 5 }]} onPress={() => navigation.navigate('Stack Details', { stackId })}>
+            <TouchableOpacity
+              style={[themeStyles.primaryButton, { marginHorizontal: 5 }]}
+              onPress={() => navigation.navigate("Stack Details", { stackId })}
+            >
               <Ionicons name="clipboard-sharp" size={24} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity style={[themeStyles.secondaryButton, { marginHorizontal: 5 }]} onPress={handleAddCard}>
+            <TouchableOpacity
+              style={[themeStyles.secondaryButton, { marginHorizontal: 5 }]}
+              onPress={handleAddCard}
+            >
               <Ionicons name="add-circle-sharp" size={24} color="white" />
             </TouchableOpacity>
             <SettingsModal />
           </View>
-          <View style={{margin: 5}}>
-          <Text style={[themeStyles.titleText, { marginLeft: 5, marginVertical: 5 }]}>{stack.stackName}</Text>
-          <Text style={[themeStyles.subText, { marginLeft: 15, marginVertical: 5 }]}>{stack.category}</Text>
+          <View style={{ margin: 5 }}>
+            <Text
+              style={[
+                themeStyles.titleText,
+                { marginLeft: 5, marginVertical: 5 },
+              ]}
+            >
+              {stack.stackName}
+            </Text>
+            <Text
+              style={[
+                themeStyles.subText,
+                { marginLeft: 15, marginVertical: 5 },
+              ]}
+            >
+              {stack.category}
+            </Text>
           </View>
           <FlatList
             data={cards}
             refreshControl={
-              <RefreshControl refreshing={refreshing}
+              <RefreshControl
+                refreshing={refreshing}
                 onRefresh={onRefresh}
-                tintColor={'gray'}
+                tintColor={"gray"}
                 title="Refreshing"
-                titleColor={'gray'}
+                titleColor={"gray"}
               />
             }
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <View style={[themeStyles.card, { flexDirection: 'row', alignContent: 'center', alignItems: 'center', marginVertical: 2 }]}>
-                <Text style={[themeStyles.text, { width: '70%', marginRight: 5 }]} numberOfLines={1} ellipsizeMode='tail'>{item.question}</Text>
+              <View
+                style={[
+                  themeStyles.card,
+                  {
+                    flexDirection: "row",
+                    alignContent: "center",
+                    alignItems: "center",
+                    marginVertical: 2,
+                  },
+                ]}
+              >
+                <Text
+                  style={[themeStyles.text, { width: "70%", marginRight: 5 }]}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {item.question}
+                </Text>
 
                 <TouchableOpacity
                   style={[themeStyles.primaryButton, { marginHorizontal: 2 }]}
-                  onPress={() => handleEditCard(item.id, item.question, item.answer)}
+                  onPress={() =>
+                    handleEditCard(item.id, item.question, item.answer)
+                  }
                 >
                   <Ionicons name="create" size={24} color="white" />
                 </TouchableOpacity>
@@ -157,7 +219,11 @@ const ManageCardsScreen = ({ route, navigation }) => {
                   style={[themeStyles.dangerButton, { marginHorizontal: 2 }]}
                   onPress={() => handleDeleteCard(item.id)}
                 >
-                  <Ionicons name="close-circle-outline" size={24} color="white" />
+                  <Ionicons
+                    name="close-circle-outline"
+                    size={24}
+                    color="white"
+                  />
                 </TouchableOpacity>
               </View>
             )}
@@ -170,9 +236,15 @@ const ManageCardsScreen = ({ route, navigation }) => {
             transparent={false}
           >
             <View style={themeStyles.modalView}>
-              {isAddingCard && (<Text style={[themeStyles.titleText]}>Add Card</Text>)}
-              {isEditingCard && (<Text style={[themeStyles.titleText]}>Edit Card</Text>)}
-              <Text style={[themeStyles.text, { alignSelf: 'flex-start' }]}>Question</Text>
+              {isAddingCard && (
+                <Text style={[themeStyles.titleText]}>Add Card</Text>
+              )}
+              {isEditingCard && (
+                <Text style={[themeStyles.titleText]}>Edit Card</Text>
+              )}
+              <Text style={[themeStyles.text, { alignSelf: "flex-start" }]}>
+                Question
+              </Text>
               <TextInput
                 style={[themeStyles.input, styles.input]}
                 placeholder="Write your question here"
@@ -181,7 +253,9 @@ const ManageCardsScreen = ({ route, navigation }) => {
                 multiline={true}
                 numberOfLines={5}
               />
-              <Text style={[themeStyles.text, { alignSelf: 'flex-start' }]}>Answer</Text>
+              <Text style={[themeStyles.text, { alignSelf: "flex-start" }]}>
+                Answer
+              </Text>
               <TextInput
                 style={[themeStyles.input, styles.input]}
                 placeholder="Write your answer here"
@@ -190,7 +264,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
                 multiline={true}
                 numberOfLines={5}
               />
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <TouchableOpacity
                   style={[themeStyles.configButton, { marginHorizontal: 5 }]}
                   onPress={handleCancelModal}
@@ -216,13 +290,23 @@ const ManageCardsScreen = ({ route, navigation }) => {
             animationType="slide"
           >
             <View style={themeStyles.modalView}>
-              <Text style={[themeStyles.titleText, { marginVertical: 10 }]}>Delete Card</Text>
-              <Text style={themeStyles.text}>Are you sure you want to delete this card?</Text>
-              <View style={{ flexDirection: 'row', marginTop: 20 }}>
-                <TouchableOpacity onPress={handleCancelModal} style={[themeStyles.configButton, { marginHorizontal: 5 }]}>
+              <Text style={[themeStyles.titleText, { marginVertical: 10 }]}>
+                Delete Card
+              </Text>
+              <Text style={themeStyles.text}>
+                Are you sure you want to delete this card?
+              </Text>
+              <View style={{ flexDirection: "row", marginTop: 20 }}>
+                <TouchableOpacity
+                  onPress={handleCancelModal}
+                  style={[themeStyles.configButton, { marginHorizontal: 5 }]}
+                >
                   <Ionicons name="return-down-back" size={24} color="white" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleSaveCard} style={[themeStyles.dangerButton, { marginHorizontal: 5 }]}>
+                <TouchableOpacity
+                  onPress={handleSaveCard}
+                  style={[themeStyles.dangerButton, { marginHorizontal: 5 }]}
+                >
                   <Text style={themeStyles.buttonText}>Delete</Text>
                 </TouchableOpacity>
               </View>
@@ -238,13 +322,13 @@ const ManageCardsScreen = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   input: {
-    width: '100%',
+    width: "100%",
     height: 200,
     paddingHorizontal: 10,
     marginVertical: 10,
   },
   disabledButton: {
-    backgroundColor: 'gray',
+    backgroundColor: "gray",
     padding: 10,
     borderRadius: 5,
     margin: 10,

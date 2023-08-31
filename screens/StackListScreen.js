@@ -1,21 +1,28 @@
 // screens/StackListScreen.js
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, FlatList, RefreshControl, ActivityIndicator, useColorScheme } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  RefreshControl,
+  ActivityIndicator,
+  useColorScheme,
+} from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { auth } from '../firebase/config';
+import { auth } from "../firebase/config";
 
-import LoadingIndicator from '../components/LoadingIndicator';
-import StackModal from '../components/StackModal';
-import SettingsModal from '../components/SettingsModal';
+import LoadingIndicator from "../components/LoadingIndicator";
+import StackModal from "../components/StackModal";
+import SettingsModal from "../components/SettingsModal";
 
-import { getAllStacks } from '../utils';
+import { getAllStacks } from "../utils";
 
-import { getThemeStyles } from '../styles/theme';
+import { getThemeStyles } from "../styles/theme";
 
 const StackListScreen = ({ route, navigation }) => {
-
   const [refreshing, setRefreshing] = useState(false);
   const [stacks, setStacks] = useState([]);
   const [expandedCategories, setExpandedCategories] = useState([]);
@@ -37,20 +44,22 @@ const StackListScreen = ({ route, navigation }) => {
     }
   }, [refreshing]);
 
+  // Handle refresh for Flatlist
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
-    }, 2000);
+    }, 2000); // 2 second pause
   }, []);
 
   // Function to group stacks by category for Accordion
   const groupedStacks = stacks.reduce((result, stack) => {
-    const category = stack.category || 'Uncategorized';
+    const category = stack.category || "Uncategorized";
     result[category] = [...(result[category] || []), stack];
     return result;
   }, {});
 
+  // Handles the expansion of category sections
   const toggleCategory = (category) => {
     if (expandedCategories.includes(category)) {
       setExpandedCategories((prevCategories) =>
@@ -61,6 +70,7 @@ const StackListScreen = ({ route, navigation }) => {
     }
   };
 
+  // Utility to render stack panels under a stack category
   const renderItem = ({ item }) => {
     const isExpanded = expandedCategories.includes(item.title);
     return (
@@ -68,33 +78,66 @@ const StackListScreen = ({ route, navigation }) => {
         {stacks ? (
           <>
             <TouchableOpacity
-              style={[themeStyles.card, {
-                flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', justifyContent: 'space-between',
-                marginTop: 10,
-                marginBottom: 2,
-              }]}
+              style={[
+                themeStyles.card,
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  justifyContent: "space-between",
+                  marginTop: 10,
+                  marginBottom: 2,
+                },
+              ]}
               onPress={() => toggleCategory(item.title)}
             >
-              {isExpanded ? (<Ionicons name="folder-open" size={24} style={themeStyles.text}/>) : (<Ionicons name="folder" size={24} style={themeStyles.text}/>)}
-     
-              <Text style={[themeStyles.titleText, { width: '80%', }]}
-                numberOfLines={1} ellipsizeMode='tail'
-              >{item.title}</Text>
-              <Text style={[themeStyles.text]}>{isExpanded ? '▼' : '▶'}</Text>
+              {isExpanded ? (
+                <Ionicons
+                  name="folder-open"
+                  size={24}
+                  style={themeStyles.text}
+                />
+              ) : (
+                <Ionicons name="folder" size={24} style={themeStyles.text} />
+              )}
+
+              <Text
+                style={[themeStyles.titleText, { width: "80%" }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {item.title}
+              </Text>
+              <Text style={[themeStyles.text]}>{isExpanded ? "▼" : "▶"}</Text>
             </TouchableOpacity>
             {isExpanded && (
               <FlatList
                 data={item.data}
                 renderItem={({ item }) => (
                   <TouchableOpacity
-                    style={[themeStyles.card, {
-                      marginVertical: 5,
-                      marginLeft: 30,
-                    }]}
-                    onPress={() => navigation.navigate('Stack Details', { stackId: item.id})}
+                    style={[
+                      themeStyles.card,
+                      {
+                        marginVertical: 5,
+                        marginLeft: 30,
+                      },
+                    ]}
+                    onPress={() =>
+                      navigation.navigate("Stack Details", { stackId: item.id })
+                    }
                   >
-                    <Text style={[themeStyles.titleText, { marginBottom: 8, }]} numberOfLines={1} ellipsizeMode='tail'>{item.stackName}</Text>
-                    <Text style={[themeStyles.subText, { marginLeft: 3 }]}>{item.cardCount > 0 ? (`${item.cardCount} Cards`) : ('No Cards')}</Text>
+                    <Text
+                      style={[themeStyles.titleText, { marginBottom: 8 }]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {item.stackName}
+                    </Text>
+                    <Text style={[themeStyles.subText, { marginLeft: 3 }]}>
+                      {item.cardCount > 0
+                        ? `${item.cardCount} Cards`
+                        : "No Cards"}
+                    </Text>
                   </TouchableOpacity>
                 )}
                 keyExtractor={(item) => item.id.toString()}
@@ -102,33 +145,44 @@ const StackListScreen = ({ route, navigation }) => {
             )}
           </>
         ) : (
-          <ActivityIndicator size="large" style={{ justifyContent: "center" }} />
-        )
-        }
+          <ActivityIndicator
+            size="large"
+            style={{ justifyContent: "center" }}
+          />
+        )}
       </React.Fragment>
     );
   };
 
+  // Main render
   return (
     <>
       {themeStyles ? (
         <View style={[themeStyles.container]}>
-          <View style={{ flexDirection: 'row', paddingBottom: 10, marginBottom: 10, borderBottomWidth: 1, borderBottomColor: 'gray' }}>
-            <StackModal mode={'add'} onRefresh={onRefresh} />
+          <View
+            style={{
+              flexDirection: "row",
+              paddingBottom: 10,
+              marginBottom: 10,
+              borderBottomWidth: 1,
+              borderBottomColor: "gray",
+            }}
+          >
+            <StackModal mode={"add"} onRefresh={onRefresh} />
             <SettingsModal onRefresh={onRefresh} />
           </View>
           <FlatList
-            data={Object.entries(groupedStacks)
-              .map(([category, stacks]) => ({
-                title: category,
-                data: stacks,
-              }))}
+            data={Object.entries(groupedStacks).map(([category, stacks]) => ({
+              title: category,
+              data: stacks,
+            }))}
             refreshControl={
-              <RefreshControl refreshing={refreshing}
+              <RefreshControl
+                refreshing={refreshing}
                 onRefresh={onRefresh}
-                tintColor={'gray'}
+                tintColor={"gray"}
                 title="Refreshing"
-                titleColor={'gray'}
+                titleColor={"gray"}
               />
             }
             renderItem={renderItem}

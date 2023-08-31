@@ -1,10 +1,12 @@
 import { db, auth } from "../firebase/config";
 
-// Helper function to get all stacks
+// Helper function to get all stacks authored by current user
 const getAllStacks = async () => {
   try {
-    const stacksCollection = db.collection('stacks');
-    const querySnapshot = await stacksCollection.where("author", "==", auth.currentUser.uid).get();
+    const stacksCollection = db.collection("stacks");
+    const querySnapshot = await stacksCollection
+      .where("author", "==", auth.currentUser.uid)
+      .get();
 
     const stacks = [];
     querySnapshot.forEach((doc) => {
@@ -13,7 +15,6 @@ const getAllStacks = async () => {
 
     return stacks;
   } catch (error) {
-    console.error('Error getting stacks:', error);
     throw error;
   }
 };
