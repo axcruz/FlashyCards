@@ -265,13 +265,13 @@ const ManageCardsScreen = ({ route, navigation }) => {
               contentContainerStyle={themeStyles.modalView}
             >
               {isViewingCard && (
-                <Text style={[themeStyles.titleText]}>View Card</Text>
+                <Text style={themeStyles.titleText}>View Card</Text>
               )}
               {isAddingCard && (
-                <Text style={[themeStyles.titleText]}>Add Card</Text>
+                <Text style={themeStyles.titleText}>Add Card</Text>
               )}
               {isEditingCard && (
-                <Text style={[themeStyles.titleText]}>Edit Card</Text>
+                <Text style={themeStyles.titleText}>Edit Card</Text>
               )}
               <Text style={[themeStyles.text, { alignSelf: "flex-start" }]}>
                 Question
@@ -313,7 +313,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
                     onPress={handleSaveCard}
                     disabled={isProcessing}
                   >
-                    <Text style={[themeStyles.buttonText]}>Submit</Text>
+                    <Text style={themeStyles.buttonText}>Submit</Text>
                   </TouchableOpacity>
                 )}
               </View>
@@ -363,12 +363,6 @@ const styles = StyleSheet.create({
     height: 200,
     paddingHorizontal: 10,
     marginVertical: 10,
-  },
-  disabledButton: {
-    backgroundColor: "gray",
-    padding: 10,
-    borderRadius: 5,
-    margin: 10,
   },
 });
 

@@ -50,7 +50,7 @@ const CardScreen = ({ route, navigation }) => {
         clearInterval(timerRef.current);
       };
     }
-  }, []);
+  }, );
 
   // If time is up go to next card
   useEffect(() => {
@@ -59,11 +59,11 @@ const CardScreen = ({ route, navigation }) => {
         handleNextCard();
       }
     }
-  }, [timeRemaining]);
+  }, [isUntimed, timeRemaining]);
 
   // Main Render
   return (
-    <View style={[themeStyles.container]}>
+    <View style={themeStyles.container}>
       <View
         style={{
           flexDirection: "row",
@@ -115,7 +115,7 @@ const CardScreen = ({ route, navigation }) => {
               ]}
             >
               <ScrollView>
-                <Text style={[themeStyles.text]}>
+                <Text style={themeStyles.text}>
                   {showAnswer
                     ? cards[currentIndex].answer
                     : cards[currentIndex].question}

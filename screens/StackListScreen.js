@@ -84,7 +84,6 @@ const StackListScreen = ({ route, navigation }) => {
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  justifyContent: "space-between",
                   marginTop: 10,
                   marginBottom: 2,
                 },
@@ -108,7 +107,7 @@ const StackListScreen = ({ route, navigation }) => {
               >
                 {item.title}
               </Text>
-              <Text style={[themeStyles.text]}>{isExpanded ? "▼" : "▶"}</Text>
+              <Text style={themeStyles.text}>{isExpanded ? "▼" : "▶"}</Text>
             </TouchableOpacity>
             {isExpanded && (
               <FlatList
@@ -158,7 +157,7 @@ const StackListScreen = ({ route, navigation }) => {
   return (
     <>
       {themeStyles ? (
-        <View style={[themeStyles.container]}>
+        <View style={themeStyles.container}>
           <View
             style={{
               flexDirection: "row",
