@@ -68,14 +68,9 @@ const StackDetailScreen = ({ route, navigation }) => {
     setUntimed(!untimed);
   };
 
-  // Toggle random order state. If random order is true, shuffle cards, otherwise order them
+  // Toggle random order state
   const toggleRandomOrder = () => {
     setRandomOrder(!randomOrder);
-    if (randomOrder) {
-      setCards(shuffleArray(cards));
-    } else {
-      setCards(cards.sort((a, b) => a.order - b.order));
-    }
   };
 
   // When play/start is clicked set the configs and nav to the cards screen
@@ -83,6 +78,12 @@ const StackDetailScreen = ({ route, navigation }) => {
     const timeInSeconds = parseInt(timePerCardInSeconds, 10);
     if (isNaN(timeInSeconds) || timeInSeconds <= 0) {
       return; // Ignore invalid or zero time
+    }
+    // If random order is true, shuffle cards, otherwise order them
+    if (randomOrder) {
+      setCards(shuffleArray(cards));
+    } else {
+      setCards(cards.sort((a, b) => a.order - b.order));
     }
     navigation.navigate("Cards", {
       stackId,
