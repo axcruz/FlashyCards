@@ -1,7 +1,7 @@
 // App.js
 
 import React, { useEffect, useState } from "react";
-import { View, useColorScheme } from "react-native";
+import { View, useColorScheme} from "react-native";
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import {

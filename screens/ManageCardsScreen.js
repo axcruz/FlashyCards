@@ -14,6 +14,7 @@ import {
   useColorScheme,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import SettingsModal from "../components/SettingsModal";
 
@@ -198,61 +199,74 @@ const ManageCardsScreen = ({ route, navigation }) => {
             }
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleViewCard(item.id, item.question, item.answer)}>
-              <View
-                style={[
-                  themeStyles.card,
-                  {
-                    flexDirection: "row",
-                    alignContent: "center",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginVertical: 5,
-                  },
-                ]}
+              <TouchableOpacity
+                onPress={() =>
+                  handleViewCard(item.id, item.question, item.answer)
+                }
               >
-
-                <Text
-                  style={[themeStyles.text, { marginRight: 5 }]}
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
+                <View
+                  style={[
+                    themeStyles.card,
+                    {
+                      flexDirection: "row",
+                      alignContent: "center",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginVertical: 5,
+                    },
+                  ]}
                 >
-                  {item.question}
-                </Text>
-    
+                  <Text
+                    style={[themeStyles.text, { marginRight: 5 }]}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {item.question}
+                  </Text>
 
-                <View style={{ flexDirection: "row", alignSelf: "flex-end" }}>
-                  <TouchableOpacity
-                    style={[themeStyles.primaryButton, { marginHorizontal: 5 }]}
-                    onPress={() =>
-                      handleEditCard(item.id, item.question, item.answer)
-                    }
-                  >
-                    <Ionicons name="create" size={24} color="white" />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[themeStyles.dangerButton, { marginHorizontal: 5 }]}
-                    onPress={() => handleDeleteCard(item.id)}
-                  >
-                    <Ionicons
-                      name="close-circle-outline"
-                      size={24}
-                      color="white"
-                    />
-                  </TouchableOpacity>
+                  <View style={{ flexDirection: "row", alignSelf: "flex-end" }}>
+                    <TouchableOpacity
+                      style={[
+                        themeStyles.primaryButton,
+                        { marginHorizontal: 5 },
+                      ]}
+                      onPress={() =>
+                        handleEditCard(item.id, item.question, item.answer)
+                      }
+                    >
+                      <Ionicons name="create" size={24} color="white" />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[
+                        themeStyles.dangerButton,
+                        { marginHorizontal: 5 },
+                      ]}
+                      onPress={() => handleDeleteCard(item.id)}
+                    >
+                      <Ionicons
+                        name="close-circle-outline"
+                        size={24}
+                        color="white"
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
               </TouchableOpacity>
             )}
           />
 
-          {/* Modal for adding/editing cards */}
+          {/* Modal for viewing/adding/editing cards */}
           <Modal
             visible={isViewingCard || isAddingCard || isEditingCard}
             animationType="slide"
             transparent={false}
           >
-            <View style={themeStyles.modalView}>
+            <KeyboardAwareScrollView
+              contentContainerStyle={themeStyles.modalView}
+            >
+              {isViewingCard && (
+                <Text style={[themeStyles.titleText]}>View Card</Text>
+              )}
               {isAddingCard && (
                 <Text style={[themeStyles.titleText]}>Add Card</Text>
               )}
@@ -270,6 +284,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
                 multiline={true}
                 numberOfLines={5}
                 readOnly={isViewingCard}
+                keyboardShouldPersistTaps={"never"}
               />
               <Text style={[themeStyles.text, { alignSelf: "flex-start" }]}>
                 Answer
@@ -282,6 +297,7 @@ const ManageCardsScreen = ({ route, navigation }) => {
                 multiline={true}
                 numberOfLines={5}
                 readOnly={isViewingCard}
+                keyboardShouldPersistTaps={"never"}
               />
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <TouchableOpacity
@@ -291,18 +307,17 @@ const ManageCardsScreen = ({ route, navigation }) => {
                 >
                   <Ionicons name="return-down-back" size={24} color="white" />
                 </TouchableOpacity>
-                { !isViewingCard && (
-                <TouchableOpacity
-                  style={[themeStyles.successButton, { marginHorizontal: 5 }]}
-                  onPress={handleSaveCard}
-                  disabled={isProcessing}
-                >
-                  <Text style={[themeStyles.buttonText]}>Submit</Text>
-                </TouchableOpacity>
-                )
-}
+                {!isViewingCard && (
+                  <TouchableOpacity
+                    style={[themeStyles.successButton, { marginHorizontal: 5 }]}
+                    onPress={handleSaveCard}
+                    disabled={isProcessing}
+                  >
+                    <Text style={[themeStyles.buttonText]}>Submit</Text>
+                  </TouchableOpacity>
+                )}
               </View>
-            </View>
+            </KeyboardAwareScrollView>
           </Modal>
 
           {/* Modal for deleting cards */}

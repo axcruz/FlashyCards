@@ -6,7 +6,9 @@ import {
   Text,
   TextInput,
   useColorScheme,
+  SafeAreaView,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import addStack from "../utils/addStack";
 import updateStack from "../utils/updateStack";
@@ -80,69 +82,69 @@ const StackModal = (props) => {
           setModalVisible(!modalVisible);
         }}
       >
-        <View style={[themeStyles.modalView]}>
-          <Text style={[themeStyles.titleText, { marginVertical: 10 }]}>
-            {modalMode == "add" ? "New Stack" : "Update Stack"}
-          </Text>
-          <Text
-            style={[
-              themeStyles.text,
-              { alignSelf: "flex-start", marginBottom: 5 },
-            ]}
-          >
-            Stack Name
-          </Text>
-          <TextInput
-            style={[
-              themeStyles.input,
-              {
-                width: "100%",
-                height: 40,
-                paddingLeft: 10,
-                marginBottom: 15,
-              },
-            ]}
-            maxLength={255}
-            value={stackName}
-            onChangeText={setStackName}
-          />
-          <Text
-            style={[
-              themeStyles.text,
-              { alignSelf: "flex-start", marginBottom: 5 },
-            ]}
-          >
-            Category
-          </Text>
-          <TextInput
-            style={[
-              themeStyles.input,
-              {
-                width: "100%",
-                height: 40,
-                paddingLeft: 10,
-                marginBottom: 15,
-              },
-            ]}
-            maxLength={255}
-            value={category}
-            onChangeText={setCategory}
-          />
-          <View style={{ flexDirection: "row", marginTop: 20 }}>
-            <TouchableOpacity
-              style={[themeStyles.configButton, { marginHorizontal: 5 }]}
-              onPress={toggleStackModal}
+        <KeyboardAwareScrollView contentContainerStyle={[themeStyles.modalView]}>
+            <Text style={[themeStyles.titleText, { marginVertical: 10 }]}>
+              {modalMode == "add" ? "New Stack" : "Update Stack"}
+            </Text>
+            <Text
+              style={[
+                themeStyles.text,
+                { alignSelf: "flex-start", marginBottom: 5 },
+              ]}
             >
-              <Ionicons name="return-down-back" size={24} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[themeStyles.successButton, { marginHorizontal: 5 }]}
-              onPress={handleSubmit}
+              Stack Name
+            </Text>
+            <TextInput
+              style={[
+                themeStyles.input,
+                {
+                  width: "100%",
+                  height: 40,
+                  paddingLeft: 10,
+                  marginBottom: 15,
+                },
+              ]}
+              maxLength={255}
+              value={stackName}
+              onChangeText={setStackName}
+            />
+            <Text
+              style={[
+                themeStyles.text,
+                { alignSelf: "flex-start", marginBottom: 5 },
+              ]}
             >
-              <Text style={themeStyles.buttonText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+              Category
+            </Text>
+            <TextInput
+              style={[
+                themeStyles.input,
+                {
+                  width: "100%",
+                  height: 40,
+                  paddingLeft: 10,
+                  marginBottom: 15,
+                },
+              ]}
+              maxLength={255}
+              value={category}
+              onChangeText={setCategory}
+            />
+            <View style={{ flexDirection: "row", marginTop: 20 }}>
+              <TouchableOpacity
+                style={[themeStyles.configButton, { marginHorizontal: 5 }]}
+                onPress={toggleStackModal}
+              >
+                <Ionicons name="return-down-back" size={24} color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[themeStyles.successButton, { marginHorizontal: 5 }]}
+                onPress={handleSubmit}
+              >
+                <Text style={themeStyles.buttonText}>Submit</Text>
+              </TouchableOpacity>
+            </View>
+        </KeyboardAwareScrollView>
       </Modal>
       <TouchableOpacity
         style={[themeStyles.tertiaryButton, { marginHorizontal: 5 }]}

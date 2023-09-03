@@ -102,15 +102,16 @@ const CardScreen = ({ route, navigation }) => {
               >{`Time Remaining: ${timeRemaining} seconds`}</Text>
             )}
 
-            <Text style={[themeStyles.titleText, { margin: 10 }]}>
+            <Text style={[themeStyles.titleText, { margin: 10 },
+            showAnswer ? { color: "green"} : {}]}>
               {showAnswer ? "Answer" : "Question"}
             </Text>
 
             <View
               style={[
                 themeStyles.card,
-                { width: "100%", height: "50%" },
-                showAnswer ? { borderColor: "green" } : { borderColor: "blue" },
+                { width: "100%", height: "50%", borderWidth: 2 },
+                showAnswer ? { borderColor: "green", backgroundColor: 'rgba(0,255,0,0.2)' } : {},
               ]}
             >
               <ScrollView>
@@ -127,17 +128,19 @@ const CardScreen = ({ route, navigation }) => {
               onPress={() => setShowAnswer(!showAnswer)}
             >
               {showAnswer ? (
-                <Text style={[themeStyles.text, { color: "blue" }]}>
-                  Show Question
+                <Text style={[themeStyles.text, { color: "blue", fontWeight: 
+                'bold' }]}>
+                  See Question
                 </Text>
               ) : (
-                <Text style={[themeStyles.text, { color: "green" }]}>
-                  Show Answer
+                <Text style={[themeStyles.text, { color: "green", fontWeight: 
+                'bold'  }]}>
+                  See Answer
                 </Text>
               )}
             </TouchableOpacity>
 
-            <View style={{ flexDirection: "row", marginTop: 20 }}>
+            <View style={{ flexDirection: "row", marginTop: 40 }}>
               {currentIndex > 0 && (
                 <TouchableOpacity
                   style={[themeStyles.primaryButton, { marginHorizontal: 5 }]}
@@ -170,7 +173,7 @@ const CardScreen = ({ route, navigation }) => {
                 navigation.navigate("Stack Details", { stackId: stackId })
               }
             >
-              <Text style={[themeStyles.text, { color: "blue" }]}>
+              <Text style={[themeStyles.text, { color: "blue", fontWeight: 'bold' }]}>
                 Start Over
               </Text>
             </TouchableOpacity>
