@@ -63,7 +63,7 @@ const ResetPasswordScreen = ({ navigation }) => {
           <Text style={themeStyles.buttonText}>Reset password</Text>
         </TouchableOpacity>
         <View style={styles.footerView}>
-          <Text style={styles.subText}>
+          <Text style={themeStyles.subText}>
             Already reset? Back to{" "}
             <Text onPress={onFooterLinkPress} style={styles.footerLink}>
               Log in

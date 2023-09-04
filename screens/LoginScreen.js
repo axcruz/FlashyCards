@@ -83,7 +83,7 @@ const LoginScreen = ({ navigation }) => {
           <Text style={themeStyles.buttonText}>Log in</Text>
         </TouchableOpacity>
         <View style={styles.footerView}>
-          <Text style={styles.subText}>
+          <Text style={themeStyles.subText}>
             Don't have an account?{" "}
             <Text onPress={onFooterLinkPress} style={styles.footerLink}>
               Sign up

@@ -52,7 +52,7 @@ const StackDetailScreen = ({ route, navigation }) => {
     };
     fetchData();
     setRefreshing(false);
-  }, [stackId, refreshing]);
+  },  [stackId, randomOrder, navigation]);
 
   // Helper function to shuffle the ordering of cards
   const shuffleArray = (array) => {

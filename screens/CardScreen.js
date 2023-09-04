@@ -59,7 +59,7 @@ const CardScreen = ({ route, navigation }) => {
         handleNextCard();
       }
     }
-  }, [isUntimed, timeRemaining]);
+  }, );
 
   // Main Render
   return (

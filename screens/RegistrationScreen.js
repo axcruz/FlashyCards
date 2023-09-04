@@ -104,7 +104,7 @@ const RegistrationScreen = ({ navigation }) => {
             <Text style={themeStyles.buttonText}>Register</Text>
           </TouchableOpacity>
           <View style={styles.footerView}>
-            <Text style={styles.footerText}>
+            <Text style={themeStyles.subText}>
               Already have an account?{" "}
               <Text onPress={onFooterLinkPress} style={styles.footerLink}>
                 Log in
@@ -139,10 +139,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     marginTop: 20,
-  },
-  footerText: {
-    fontSize: 16,
-    color: "#2e2e2d",
   },
   footerLink: {
     color: "blue",

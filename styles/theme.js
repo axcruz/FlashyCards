@@ -198,6 +198,7 @@ const themes = {
     card: {
       ...defaultStyles.card,
       color: colors.textDark,
+      backgroundColor: colors.backgroundPanelDark,
     },
     input: {
       ...defaultStyles.input,
