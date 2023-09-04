@@ -31,7 +31,7 @@ cd flashycards
 ```
 npm install
 ```
-or
+&nbsp;&nbsp;&nbsp;&nbsp; or
 ```
 yarn install
 ```
@@ -46,9 +46,9 @@ A default configuration to a usable Firebase project has already been setup and 
 ```
 npm start
 ```
-or
+&nbsp;&nbsp;&nbsp;&nbsp; or
 ```
-expo start
+expo start --go
 ```
 
 6. You should see a QR code and a list of command options.
@@ -80,7 +80,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Contact
 
-If you have any questions or suggestions, please feel free to contact us at [axedcruz@gmail.com](mailto:axedcruz@gmail.com).
+If you have any questions or suggestions, please feel free to contact me at [axedcruz@gmail.com](mailto:axedcruz@gmail.com).
 
 Happy learning with FlashyCards!
 
