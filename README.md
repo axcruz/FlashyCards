@@ -36,11 +36,9 @@ npm install
 yarn install
 ```
 
-4. Set up Firebase:
+4. A default configuration to a usable Firebase project has already been setup and can be used if preferred Otherwise, your own connection to Firebase can be used. To set up Firebase:
 - Create a Firebase project on the [Firebase Console](https://console.firebase.google.com/).
 - Configure Firebase in your project by adding your Firebase configuration to the `firebase/config.js` file.
-
-A default configuration to a usable Firebase project has already been setup and can be used if preferred.
 
 5. Start the development server:
 ```
